@@ -1427,3 +1427,4 @@ C:\Users\Wong Jianming\Desktop\qingjia\code\qingjia_MVC\bin\zh-Hans\Microsoft.Ow
 C:\Users\Wong Jianming\Desktop\qingjia\code\qingjia_MVC\obj\Debug\qingjia_MVC.dll
 C:\Users\Wong Jianming\Desktop\qingjia\code\qingjia_MVC\obj\Debug\qingjia_MVC.pdb
 C:\Users\Wong Jianming\Desktop\请假系统--Web端\qingjia\code\qingjia_MVC\obj\Debug\qingjia_MVC.csprojResolveAssemblyReference.cache
+C:\Users\Wong Jianming\Desktop\qingjia\code\qingjia_MVC\obj\Debug\qingjia_MVC.csprojResolveAssemblyReference.cache

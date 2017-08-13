@@ -17,7 +17,7 @@ namespace qingjia_MVC
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Account", action = "Index", id = UrlParameter.Optional }//网站主页   正常运行网站时  将此设定为主页
-                //defaults: new { controller = "BaseApi", action = "Index", id = UrlParameter.Optional }//API接口主页   测试API接口是  将此设定为主页
+                //defaults: new { controller = "BaseApi", action = "Index", id = UrlParameter.Optional }//API接口主页   测试API接口时  将此设定为主页
             );
         }
     }
