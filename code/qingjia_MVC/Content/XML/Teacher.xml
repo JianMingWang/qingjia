@@ -11,8 +11,8 @@
     </TreeNode>
     <TreeNode Text="通讯录" NavigateUrl="~/AddressList/GradeAddress" IconFont="SignIn">
     </TreeNode>
-    <TreeNode Text="晚点名名单" NavigateUrl="~/CallName/NameForT" IconFont="SignIn">
-    </TreeNode>
+    <!--<TreeNode Text="晚点名名单" NavigateUrl="~/CallName/NameForT" IconFont="SignIn">
+    </TreeNode>-->
     <TreeNode Text="节假日去向统计" NavigateUrl="~/Vacation/Vacation" IconFont="SignIn">
     </TreeNode>
   </TreeNode>
@@ -20,8 +20,8 @@
   <TreeNode Text="通知管理" Icon="Transmit" Expanded="true">
     <TreeNode Text="晚点名通知" NavigateUrl="~/Message/NightMessage" IconFont="SignIn">
     </TreeNode>
-    <TreeNode Text="销假通知" NavigateUrl="~/Message/DeleteMessage" IconFont="SignIn">
-    </TreeNode>
+    <!--<TreeNode Text="销假通知" NavigateUrl="~/Message/DeleteMessage" IconFont="SignIn">
+    </TreeNode>-->
     <TreeNode Text="截止通知" NavigateUrl="~/Message/DeadlineMessage" IconFont="SignIn">
     </TreeNode>
   </TreeNode>

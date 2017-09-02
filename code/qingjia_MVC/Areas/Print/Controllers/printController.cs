@@ -1,28 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using FineUIMvc;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Text;
 using System.Data;
-using System.Data.SqlClient;
-using Maticsoft.Common;
 using System.Drawing;
-using LTP.Accounts.Bus;
 using System.Configuration;
-using System.Data.OleDb;
 using System.IO;
-using System.Linq;
-using System.Web.Security;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Xml.Linq;
 using qingjia_MVC.Models;
-using qingjia_MVC.Content;
 using qingjia_MVC.Controllers;
 
 namespace qingjia_MVC.Areas.Print.Controllers
@@ -61,6 +46,14 @@ namespace qingjia_MVC.Areas.Print.Controllers
             //获取图片路径
             //图片在计算机上的存储路径，存储在webconfig中
             string picPath = ConfigurationManager.AppSettings["picPath"].ToString();
+
+            int ToWidth = 1241;//经过缩放后 目标图片的宽度
+            int ToHeight = 1755;//经过缩放后 目标图片的高度
+
+            //标准尺寸
+            Bitmap b = new Bitmap(ToWidth, ToHeight);
+            Graphics g = Graphics.FromImage(b);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
             var leavelist = from vw_LeaveList in db.vw_LeaveList where (vw_LeaveList.ID == LV_NUM) select vw_LeaveList;
             vw_LeaveList LL = leavelist.ToList().First();
@@ -146,7 +139,11 @@ namespace qingjia_MVC.Areas.Print.Controllers
                             C_time_now.DrawString(C_nowtime, font, brush, 1500, 2850);
                             Rectangle C_rec = new Rectangle(767, 1327, 1700, 150);//文字区域，画一个矩形用来控制转行
                             C_reason.DrawString("" + LL.Reason.ToString(), font, brush, C_rec);
-                            Bitmapc.Save(Server.MapPath(@"~\res\images\qingjia\stu_class_prove.jpg"));
+
+                            g.DrawImage(Bitmapc, new Rectangle(0, 0, ToWidth, ToHeight), new Rectangle(0, 0, Bitmapc.Width, Bitmapc.Height), GraphicsUnit.Pixel);
+                            g.Dispose();
+                            b.Save(Server.MapPath(@"~\res\images\qingjia\stu_class_prove.jpg"));
+
                             string C_filename = Server.MapPath(@"~\res\images\qingjia\stu_class_prove.jpg");
                             //ViewBag.ImageUrl = "../../res/images/qingjia/stu_class_prove.jpg";
                             //return picReturn(Bitmapc);
@@ -191,7 +188,11 @@ namespace qingjia_MVC.Areas.Print.Controllers
                             S_time_now.DrawString(S_nowtime, font, brush, 1500, 2950);
                             Rectangle S_rec = new Rectangle(787, 1322, 1700, 150);//文字区域，画一个矩形用来控制转行
                             S_reason.DrawString("" + LL.Reason.ToString(), font, brush, S_rec);
-                            Bitmaps.Save(Server.MapPath(@"~\res\images\qingjia\stu_class_prove.jpg"));
+
+                            g.DrawImage(Bitmaps, new Rectangle(0, 0, ToWidth, ToHeight), new Rectangle(0, 0, Bitmaps.Width, Bitmaps.Height), GraphicsUnit.Pixel);
+                            g.Dispose();
+                            b.Save(Server.MapPath(@"~\res\images\qingjia\stu_class_prove.jpg"));
+
                             string S_filename = Server.MapPath(@"~\res\images\qingjia\stu_class_prove.jpg");
 
                             //直接输出二进制流到页面，输出图片过大
@@ -344,41 +345,31 @@ namespace qingjia_MVC.Areas.Print.Controllers
                         gtimes.DrawString(modelT_LL.PrintTimes.ToString(), font, brush, 2135, 2528);
                         StringFormat sf = new StringFormat();
                         sf.LineAlignment = StringAlignment.Center;
-                        //string filename = "";
 
                         img.Dispose();
                         if (LL.LeaveType != "长期请假")
                         {
-                            //以二进制流输出图片文件
-                            //MemoryStream fs = new MemoryStream();
-                            //bitmap.Save(fs, System.Drawing.Imaging.ImageFormat.Jpeg);
-                            //ViewBag.ImageUrl = "data:image/jpeg;base64," +fs.ToArray();
-
-                            bitmap.Save(Server.MapPath(@"~\res\images\qingjia\stu_Leaveform.jpg"));
+                            g.DrawImage(bitmap, new Rectangle(0, 0, ToWidth, ToHeight), new Rectangle(0, 0, bitmap.Width, bitmap.Height), GraphicsUnit.Pixel);
+                            g.Dispose();
+                            b.Save(Server.MapPath(@"~\res\images\qingjia\stu_Leaveform.jpg"));
                             string filename = Server.MapPath(@"~\res\images\qingjia\stu_Leaveform.jpg");
-                            ////image_ll.ImageUrl = "~\\Images\\stu_Leaveform.jpg";
-                            //ViewBag.ImageUrl = "../../res/images/qingjia/stu_Leaveform.jpg";
 
                             return picSaveReturn(filename);
-                            //return picReturn(bitmap);
                         }
                         else
                         {
-                            bitmap.Save(Server.MapPath(@"~\res\images\qingjia\stu_Leaveform_l.jpg"));
+                            g.DrawImage(bitmap, new Rectangle(0, 0, ToWidth, ToHeight), new Rectangle(0, 0, bitmap.Width, bitmap.Height), GraphicsUnit.Pixel);
+                            g.Dispose();
+                            b.Save(Server.MapPath(@"~\res\images\qingjia\stu_Leaveform_l.jpg"));
                             string filename = Server.MapPath(@"~\res\images\qingjia\stu_Leaveform_l.jpg");
-                            ////image_ll.ImageUrl = "~\\Images\\stu_Leaveform_l.jpg";
-                            //ViewBag.ImageUrl = "../../res/images/qingjia/stu_Leaveform_l.jpg";
 
                             return picSaveReturn(filename);
-                            //return picReturn(bitmap);
                         }
                     }
                     #endregion
 
-                    db.SaveChanges();
-                    return null;
                 }
-                catch
+                catch (Exception ex)
                 {
                     //提示  打印请假条错误
                     Window1_Close("出现未知错误，请联系管理员！");
@@ -397,11 +388,9 @@ namespace qingjia_MVC.Areas.Print.Controllers
         //将图片转换为二进制流，不保存在本地
         private FileResult picReturn(Bitmap bitmap)
         {
-            //FileStream fst = new FileStream();
             MemoryStream ms = new MemoryStream();
             bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
             byte[] byData = ms.GetBuffer();
-            //byte[] byData = = ms.ToArray();
             ms.Close();
             return File(byData, "image/png");
         }
