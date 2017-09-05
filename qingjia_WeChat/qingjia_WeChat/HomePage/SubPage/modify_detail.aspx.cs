@@ -5,11 +5,11 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-using qingjia_WeChat.HomePage.Class;
+using qingjia_YiBan.HomePage.Class;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace qingjia_WeChat.SubPage
+namespace qingjia_YiBan.SubPage
 {
     public partial class modify_detail : System.Web.UI.Page
     {
@@ -22,18 +22,32 @@ namespace qingjia_WeChat.SubPage
         {
             if (Check())
             {
-                string ST_NUM = Request.Cookies["UserInfo"]["UserID"].ToString();
+                string access_token = Session["access_token"].ToString();
+
                 string PW_Old = oldPw.Value.ToString().Trim();
                 string Pw_New = newPw.Value.ToString().Trim();
 
-                if (DB.CheckPassword(ST_NUM, PW_Old))
+                string _postString = String.Format("old_psd={0}&new_psd={1}&access_token={2}", PW_Old, Pw_New, access_token);
+                Client<string> client = new Client<string>();
+                ApiResult<string> result = client.PostRequest(_postString, "/api/student/password");
+
+                if (result != null)
                 {
-                    DB.ChangePw(ST_NUM, Pw_New);
-                    Response.Redirect("modify_succeed.aspx");
+                    if (result.result == "success")
+                    {
+                        Response.Redirect("modify_succeed.aspx");
+                    }
+                    else
+                    {
+                        txtError.Value = result.messages;
+                        oldPw.Value = "";
+                        newPw.Value = "";
+                        newPwConfirm.Value = "";
+                    }
                 }
                 else
                 {
-                    txtError.Value = "原密码错误！";
+                    txtError.Value = "出现未知错误，请联系管理员！";
                     oldPw.Value = "";
                     newPw.Value = "";
                     newPwConfirm.Value = "";

@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Tree>
+  <TreeNode Text="表单管理" Icon="LayoutContent" Expanded="true">
+    <TreeNode Text="节假日去向统计" NavigateUrl="~/Vacation/Vacation" IconFont="SignIn">
+    </TreeNode>
+  </TreeNode>
+</Tree>

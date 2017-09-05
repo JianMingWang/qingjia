@@ -5,6 +5,28 @@
 
 @model IEnumerable<qingjia_MVC.Models.vw_LeaveList>
 
+@section head{
+    <style>
+        .badge {
+            display: inline-block;
+            padding: 0 4px;
+            font-size: 12px;
+            line-height: 16px;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            background-color: #999;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+
+        .badge-danger {
+            background-color: #d15b47 !important;
+        }
+    </style>
+    }
+
 @section script{
     <script srd="~/res/js/grid.js"></script>
     <script>
@@ -21,110 +43,207 @@
         return '<a class="action-btn btnCancel" href="javascript:;"><img class="f-grid-cell-icon" src="' + deleteImageUrl + '"></a>';
     }
 
-    function btnAgree(value, params) {
-        var agreeImageUrl = '@Url.Content("~/res/icon/accept.png")';
-        return '<a class="action-btn btnAgree" href="javascript:;"><img class="f-grid-cell-icon" src="' + agreeImageUrl + '"></a>';
-    }
+        function btnAgree(value, params) {
+            var agreeImageUrl = '@Url.Content("~/res/icon/accept.png")';
+            return '<a class="action-btn btnAgree" href="javascript:;"><img class="f-grid-cell-icon" src="' + agreeImageUrl + '"></a>';
+        }
 
-    @*//打印假条
-    function print(rowData) {
-        var iframeWindowUrl = '@Url.Content("~/Print/print")';
-        var iframeUrl = iframeWindowUrl + '?id=' + rowData.id;
+        function btnModify(value, params) {
+            return '<a href="javascript:;" class="mywindowfield"><i class="ui-icon f-icon-edit f-grid-cell-iconfont"></i></a>';
+        }
 
-        // 显示窗体
-        F.ui.printWindow.show(iframeUrl, '打印假条 - ' + rowData.id);
-    }*@
+        //单条请假记录-同意请假
+        function agree(selectedRows) {
+            var thSort = $('.f-grid-sortable');
 
-    //同意请假
-    function agree(selectedRows) {
-        // 触发后台事件
-        F.doPostBack('@Url.Action("btnAgreeClick")', {
+            var sortField = thSort.attr('data-columnid');
+            var sortDirection = "";
+            if (thSort.hasClass('f-grid-sort-ASC')) {
+                sortDirection = "ASC";
+            }
+            if (thSort.hasClass('f-grid-sort-DESC')) {
+                sortDirection = "DESC";
+            }
+
+            // 触发后台事件
+            F.doPostBack('@Url.Action("btnAgreeClick_Leave")', {
                 'selectedRows': selectedRows,
-                'gridLeaveList_fields': F.ui.gridLeaveList.fields
+                'gridLeaveList_fields': F.ui.gridLeaveList_Leave.fields,
+                'sortField': sortField,
+                'sortDirection': sortDirection
             });
         }
 
+        //多条请假记录-同意请假
+        function batchAgree(event) {
+
+
+            var grid = F.ui.gridLeaveList_Leave;
+            if (!grid.hasSelection()) {
+                F.alert('没有选中项！');
+                return;
+            }
+
+            //触发后台时间
+            F.doPostBack('@Url.Action("ActionName")', {
+                'selected': getGridSelectedRows()
+            });
+        }
+
+        //获取Grid选定行
+        function getGridSelectedRows() {
+            var result = [], grid = F.ui.gridLeaveList_Leave;
+
+            $.each(grid.getSelectedRows(true), function (index, item) {
+                var itemArr = [];
+                itemArr.push(item.id);
+                itemArr.push(item.text);
+                itemArr.push(item.values.Gender);
+                itemArr.push(item.values.Major);
+
+                result.push(itemArr);
+            });
+            return result;
+        }
+
+        //驳回请假
         function cancel(selectedRows) {
+            var thSort = $('.f-grid-sortable');
+
+            var sortField = thSort.attr('data-columnid');
+            var sortDirection = "";
+            if (thSort.hasClass('f-grid-sort-ASC')) {
+                sortDirection = "ASC";
+            }
+            if (thSort.hasClass('f-grid-sort-DESC')) {
+                sortDirection = "DESC";
+            }
+
             // 触发后台事件
             F.doPostBack('@Url.Action("cancelWindow_Show")', {
                 'selectedRows': selectedRows,
-                'gridLeaveList_fields': F.ui.gridLeaveList.fields
+                'gridLeaveList_fields': F.ui.gridLeaveList_Leave.fields,
+                'sortField': sortField,
+                'sortDirection': sortDirection
             });
         }
 
-    //搜索框一事件
-    function onTwinTriggerBox1Blur(event) {
-        var value = this.getValue();
+        //搜索框一事件
+        function onTwinTriggerBox1Blur(event) {
+            var value = this.getValue();
 
-        // 值改变时才回发
-        if (value !== _lastTriggerBoxValue_01) {
-            _lastTriggerBoxValue_01 = value;
+            // 值改变时才回发
+            if (value !== _lastTriggerBoxValue_01) {
+                _lastTriggerBoxValue_01 = value;
 
-            // 触发后台事件
-            F.doPostBack('@Url.Action("TwinTriggerBox1_Trigger2Click")', {
-                'text': F.ui.TwinTriggerBox1.getValue()
-            });
-        }
-    }
-    //搜索框二事件
-    function onTwinTriggerBox2Blur(event) {
-        var value = this.getValue();
-
-        // 值改变时才回发
-        if (value !== _lastTriggerBoxValue_02) {
-            _lastTriggerBoxValue_02 = value;
-
-            // 触发后台事件
-            F.doPostBack('@Url.Action("TwinTriggerBox2_Trigger2Click")', {
-                'text': F.ui.TwinTriggerBox2.getValue()
-            });
-        }
-    }
-    //搜索框三事件
-    function onTwinTriggerBox3Blur(event) {
-        var value = this.getValue();
-
-        // 值改变时才回发
-        if (value !== _lastTriggerBoxValue_03) {
-            _lastTriggerBoxValue_03 = value;
-
-            // 触发后台事件
-            F.doPostBack('@Url.Action("TwinTriggerBox3_Trigger2Click")', {
-                'text': F.ui.TwinTriggerBox3.getValue()
-            });
-        }
-    }
-
-    F.ready(function () {
-
-        // 设置 TwinTriggerBox1 初始值
-        _lastTriggerBoxValue_01 = F.ui.TwinTriggerBox1.getValue();
-        // 设置 TwinTriggerBox2 初始值
-        _lastTriggerBoxValue_02 = F.ui.TwinTriggerBox2.getValue();
-        // 设置 TwinTriggerBox3 初始值
-        _lastTriggerBoxValue_03 = F.ui.TwinTriggerBox3.getValue();
-
-        var grid1 = F.ui.gridLeaveList;
-        grid1.el.on('click', 'a.action-btn', function (event) {
-            var cnode = $(this);
-
-            if (cnode.hasClass('btnCancel')) {
-                var rowE1 = $(this).closest('.f-grid-row');
-                var rowData = grid1.getRowData(rowE1);
-                //驳回请假
-                cancel([rowData.id]);
+                // 触发后台事件
+                F.doPostBack('@Url.Action("TwinTriggerBox1_Trigger2Click_Leave")', {
+                    'text': F.ui.TwinTriggerBox1.getValue()
+                });
             }
-            else if (cnode.hasClass('btnAgree')) {
-                var rowE1 = $(this).closest('.f-grid-row');
-                var rowData = grid1.getRowData(rowE1);
-                //同意请假
-                agree([rowData.id]);
-            }
-            else {
+        }
 
+        //搜索框二事件
+        function onTwinTriggerBox2Blur(event) {
+            var value = this.getValue();
+
+            // 值改变时才回发
+            if (value !== _lastTriggerBoxValue_02) {
+                _lastTriggerBoxValue_02 = value;
+
+                // 触发后台事件
+                F.doPostBack('@Url.Action("TwinTriggerBox2_Trigger2Click_Leave")', {
+                    'text': F.ui.TwinTriggerBox2.getValue()
+                });
             }
+        }
+
+        //搜索框三事件
+        function onTwinTriggerBox3Blur(event) {
+            var value = this.getValue();
+
+            // 值改变时才回发
+            if (value !== _lastTriggerBoxValue_03) {
+                _lastTriggerBoxValue_03 = value;
+
+                // 触发后台事件
+                F.doPostBack('@Url.Action("TwinTriggerBox3_Trigger2Click_Leave")', {
+                    'text': F.ui.TwinTriggerBox3.getValue()
+                });
+            }
+        }
+
+        // 打开窗体
+        function openWindow(rowData) {
+
+            // /Grid/IFrameWindow?id=104&name=刘国
+            var iframeWindowUrl = '@Url.Content("~/Leave/AuditForm/ModifyLL")';
+            var iframeUrl = iframeWindowUrl + '?LL_ID=' + rowData.id;
+
+            // 显示窗体
+            F.ui.modifyWindow.show(iframeUrl, '编辑信息 - ' + rowData.text);
+        }
+
+        F.ready(function () {
+
+            // 设置 TwinTriggerBox1 初始值
+            _lastTriggerBoxValue_01 = F.ui.TwinTriggerBox1.getValue();
+            // 设置 TwinTriggerBox2 初始值
+            _lastTriggerBoxValue_02 = F.ui.TwinTriggerBox2.getValue();
+            // 设置 TwinTriggerBox3 初始值
+            _lastTriggerBoxValue_03 = F.ui.TwinTriggerBox3.getValue();
+
+            var grid1 = F.ui.gridLeaveList_Leave;
+            grid1.el.on('click', 'a.action-btn', function (event) {
+                var cnode = $(this);
+
+                if (cnode.hasClass('btnCancel')) {
+                    var rowE1 = $(this).closest('.f-grid-row');
+                    var rowData = grid1.getRowData(rowE1);
+                    //驳回请假
+                    cancel([rowData.id]);
+                }
+                else if (cnode.hasClass('btnAgree')) {
+                    var rowE1 = $(this).closest('.f-grid-row');
+                    var rowData = grid1.getRowData(rowE1);
+                    //同意请假
+                    agree([rowData.id]);
+                }
+                else {
+
+                }
+            });
+
+            grid1.el.on('click', '.f-grid-sortable', function () {
+                alert('1');
+            });
+
+            grid1.el.on('click', 'a.mywindowfield', function (event) {
+                var rowEl = $(this).closest('.f-grid-row');
+                var rowData = grid1.getRowData(rowEl);
+                console.log(rowData);
+                openWindow(rowData);
+            });
         });
-    });
+
+        function renderExpanderDetail(value, params) {
+            var LeaveType = "";
+            var returnString = "";
+            returnString = '<div class="expander">' +
+                '<p><strong>联系人：</strong>' + params.rowData.values.ContactOne + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + '<strong>联系方式：</strong>' + params.rowData.values.OneTel + '</p>';
+            returnString = returnString + '<p><strong>请假原因：</strong>' + params.rowData.values.Reason + '</p>';
+            LeaveType = (params.rowData.values.LeaveType).substring(0, 4);
+            if (LeaveType == "节假日请") {
+                returnString = returnString + '<p><strong>离校方式：</strong>' + params.rowData.values.LeaveWay + '</p>' +
+                '<p><strong>返校方式：</strong>' + params.rowData.values.BackWay + '</p>';
+            }
+            if (LeaveType == "上课请假") {
+                returnString = returnString + '<p><strong>请假课段：</strong>' + params.rowData.values.Lesson + '</p>' +
+                '<p><strong>任课老师：</strong>' + params.rowData.values.Teacher + '</p>';
+            }
+
+            return returnString + '</div>';
+        }
     </script>
 }
 
@@ -138,16 +257,21 @@
         .Layout(LayoutType.Fit)
         .BodyPadding(0)
         .Items(
-                F.Grid()
+        F.Grid()
+            .AllowSorting(true)
+            .AutoScroll(true)
+            .SortField("")
+            .SortDirection("")
             .EnableCollapse(false)
-            .Title("请假处理")
+            .Title(ViewBag.GridLeaveTitle)
             .ShowHeader(true)
             .ShowBorder(true)
-            .ID("gridLeaveList")
+            .ID("gridLeaveList_Leave")
             .EnableCheckBoxSelect(true)
             .AllowPaging(true)
             .PageSize(20)
             .DataIDField("ID")
+            .DataTextField("ST_Name")
             .Toolbars(
                 F.Toolbar()
                     .ID("btngroup")
@@ -156,8 +280,8 @@
                             .ID("btnTotal")
                             .MarginLeft(60)
                             .MarginRight(10)
-                            .OnClick(Url.Action("btnTotal_ReloadData"), new Parameter("fields", "F.ui.gridLeaveList.fields"))
-                            .Text("全部请假"),
+                                .OnClick(Url.Action("btnTotal_ReloadData_Leave"), new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
+                            .Text(ViewBag.totalNumLeave),
                         F.ToolbarSeparator()
                             .MarginLeft(10)
                             .MarginRight(10),
@@ -165,8 +289,8 @@
                             .ID("btnShort")
                             .MarginLeft(10)
                             .MarginRight(10)
-                            .OnClick(Url.Action("btnShort_ReloadData"), new Parameter("fields", "F.ui.gridLeaveList.fields"))
-                            .Text("短期请假"),
+                                    .OnClick(Url.Action("btnShort_ReloadData_Leave"), new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
+                            .Text(ViewBag.shortNumLeave),
                         F.ToolbarSeparator()
                             .MarginLeft(10)
                             .MarginRight(10),
@@ -174,8 +298,8 @@
                             .ID("btnLong")
                             .MarginLeft(10)
                             .MarginRight(10)
-                            .OnClick(Url.Action("btnLong_ReloadData"), new Parameter("fields", "F.ui.gridLeaveList.fields"))
-                            .Text("长期请假"),
+                                    .OnClick(Url.Action("btnLong_ReloadData_Leave"), new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
+                            .Text(ViewBag.longNumLeave),
                         F.ToolbarSeparator()
                             .MarginLeft(10)
                             .MarginRight(10),
@@ -183,8 +307,8 @@
                             .ID("btnHoliday")
                             .MarginLeft(10)
                             .MarginRight(10)
-                            .OnClick(Url.Action("btnHoliday_ReloadData"), new Parameter("fields", "F.ui.gridLeaveList.fields"))
-                            .Text("节假日请假"),
+                                    .OnClick(Url.Action("btnHoliday_ReloadData_Leave"), new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
+                            .Text(ViewBag.holidayNumLeave),
                         F.ToolbarSeparator()
                             .MarginLeft(10)
                             .MarginRight(10),
@@ -192,15 +316,15 @@
                             .ID("btnCall")
                             .MarginLeft(10)
                             .MarginRight(10)
-                            .OnClick(Url.Action("btnCall_ReloadData"), new Parameter("fields", "F.ui.gridLeaveList.fields"))
-                            .Text("晚点名请假"),
+                                    .OnClick(Url.Action("btnCall_ReloadData_Leave"), new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
+                            .Text(ViewBag.nightNumLeave),
                         F.ToolbarSeparator(),
                         F.Button()
                             .ID("btnClass")
                             .MarginLeft(10)
                             .MarginRight(10)
-                            .OnClick(Url.Action("btnClass_ReloadData"), new Parameter("fields", "F.ui.gridLeaveList.fields"))
-                            .Text("上课请假备案")
+                                    .OnClick(Url.Action("btnClass_ReloadData_Leave"), new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
+                            .Text(ViewBag.classNumLeave)
                     ),
                 F.Toolbar()
                     .ID("selectGroup")
@@ -211,8 +335,8 @@
                             .MarginRight(30)
                             .ShowLabel(false)
                             .LabelAlign(LabelAlign.Right)
-                            .OnTrigger1Click(Url.Action("TwinTriggerBox1_Trigger1Click"))
-                            .OnTrigger2Click(Url.Action("TwinTriggerBox1_Trigger2Click"), new Parameter("text", "F.ui.TwinTriggerBox1.getValue()"), new Parameter("fields", "F.ui.gridLeaveList.fields"))
+                            .OnTrigger1Click(Url.Action("TwinTriggerBox1_Trigger1Click_Leave"))
+                            .OnTrigger2Click(Url.Action("TwinTriggerBox1_Trigger2Click_Leave"), new Parameter("text", "F.ui.TwinTriggerBox1.getValue()"), new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
                             .Trigger1Icon(TriggerIcon.Clear)
                             .ShowTrigger1(false)
                             .EmptyText("搜索学生姓名")
@@ -224,8 +348,8 @@
                             .MarginRight(30)
                             .ShowLabel(false)
                             .LabelAlign(LabelAlign.Right)
-                            .OnTrigger1Click(Url.Action("TwinTriggerBox2_Trigger1Click"))
-                            .OnTrigger2Click(Url.Action("TwinTriggerBox2_Trigger2Click"), new Parameter("text", "F.ui.TwinTriggerBox2.getValue()"), new Parameter("fields", "F.ui.gridLeaveList.fields"))
+                            .OnTrigger1Click(Url.Action("TwinTriggerBox2_Trigger1Click_Leave"))
+                                .OnTrigger2Click(Url.Action("TwinTriggerBox2_Trigger2Click_Leave"), new Parameter("text", "F.ui.TwinTriggerBox2.getValue()"), new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
                             .Trigger1Icon(TriggerIcon.Clear)
                             .ShowTrigger1(false)
                             .EmptyText("搜索学号")
@@ -237,8 +361,8 @@
                             .MarginRight(30)
                             .ShowLabel(false)
                             .LabelAlign(LabelAlign.Right)
-                            .OnTrigger1Click(Url.Action("TwinTriggerBox3_Trigger1Click"))
-                            .OnTrigger2Click(Url.Action("TwinTriggerBox3_Trigger2Click"), new Parameter("text", "F.ui.TwinTriggerBox3.getValue()"), new Parameter("fields", "F.ui.gridLeaveList.fields"))
+                            .OnTrigger1Click(Url.Action("TwinTriggerBox3_Trigger1Click_Leave"))
+                                .OnTrigger2Click(Url.Action("TwinTriggerBox3_Trigger2Click_Leave"), new Parameter("text", "F.ui.TwinTriggerBox3.getValue()"), new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
                             .Trigger1Icon(TriggerIcon.Clear)
                             .ShowTrigger1(false)
                             .EmptyText("搜索请假单号")
@@ -249,7 +373,7 @@
                             .MarginRight(10),
                         F.DropDownList()
                             .ID("ddlST_Class")
-                            .OnSelectedIndexChanged(Url.Action("ddlST_Class_SelectedIndexChanged"), "ddlST_Class", new Parameter("fields", "F.ui.gridLeaveList.fields"))
+                                .OnSelectedIndexChanged(Url.Action("ddlST_Class_SelectedIndexChanged"), "ddlST_Class", new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
                             .MarginLeft(30)
                             .MarginRight(30)
                             .EmptyText("请选择班级！")
@@ -266,15 +390,17 @@
                     .TextAlign(TextAlign.Center)
                     .Width(80)
                     .RendererFunction("btnAgree"),
+                //F.RenderField()
+                //    .HeaderText("编辑")
+                //    .TextAlign(TextAlign.Center)
+                //    .Width(50)
+                //    .RendererFunction("btnModify"),
                 F.RenderField()
                     .HeaderText("请假单号")
+                    .Hidden(true)
                     .DataField("ID")
+                    .SortField("ID")
                     .TextAlign(TextAlign.Center)
-                    .Width(100),
-                F.RenderField()
-                    .HeaderText("审核状态")
-                    .TextAlign(TextAlign.Center)
-                    .DataField("auditState")
                     .Width(100),
                 F.RenderField()
                     .HeaderText("姓名")
@@ -285,6 +411,7 @@
                     .HeaderText("班级")
                     .TextAlign(TextAlign.Center)
                     .DataField("ST_Class")
+                    .SortField("ST_Class")
                     .Width(100),
                     F.RenderField()
                     .HeaderText("请假类型")
@@ -292,13 +419,20 @@
                     .DataField("LeaveType")
                     .Width(150),
                     F.RenderField()
-                    .HeaderText("请假时间")
+                    .HeaderText("提交时间")
+                    .TextAlign(TextAlign.Center)
+                    .Width(170)
+                    .DataField("SubmitTime"),
+                    F.RenderField()
+                    .HeaderText("离校时间")
+                    .Hidden(false)
                     .TextAlign(TextAlign.Center)
                     .DataField("TimeLeave")
                     .FieldType(FieldType.String)
                     .Width(170),
                     F.RenderField()
                     .HeaderText("返校时间")
+                    .Hidden(false)
                     .TextAlign(TextAlign.Center)
                     .DataField("TimeBack")
                     .Width(170),
@@ -309,21 +443,25 @@
                     .Width(200),
                     F.RenderField()
                     .HeaderText("离校方式")
+                    .Hidden(true)
                     .TextAlign(TextAlign.Center)
                     .DataField("LeaveWay")
                     .Width(100),
                     F.RenderField()
                     .HeaderText("返校方式")
+                    .Hidden(true)
                     .TextAlign(TextAlign.Center)
                     .DataField("BackWay")
                     .Width(100),
                     F.RenderField()
                     .HeaderText("请假课段")
+                    .Hidden(true)
                     .TextAlign(TextAlign.Center)
                     .DataField("Lesson")
                     .Width(180),
                     F.RenderField()
                     .HeaderText("任课老师")
+                    .Hidden(true)
                     .TextAlign(TextAlign.Center)
                     .DataField("Teacher")
                     .Width(100),
@@ -337,13 +475,30 @@
                     .HeaderText("审核人")
                     .TextAlign(TextAlign.Center)
                     .DataField("AuditName")
-                    .Width(100)
+                    .Width(100),
+                    F.RenderField()
+                    .Hidden(true)
+                    .HeaderText("联系人")
+                    .TextAlign(TextAlign.Center)
+                    .DataField("ContactOne")
+                    .Width(100),
+                    F.RenderField()
+                    .Hidden(true)
+                    .HeaderText("联系方式")
+                    .TextAlign(TextAlign.Center)
+                    .DataField("OneTel")
+                    .Width(100),
+                    F.RenderField()
+                    .DataField("")
+                    .RenderAsRowExpander(true)
+                    .RendererFunction("renderExpanderDetail")
             )
             .PageItems(
                 F.Button()
                 .Text("同意请假")
                 .ID("btnLeave")
-                .OnClick(Url.Action("btnLeave_Click","AuditForm"),"gridLeaveList")
+                //.OnClick(Url.Action("btnLeave_Click", "AuditForm"), "gridLeaveList_Leave")
+                .Listener("click","batchAgree")
             )
             .DataSource(ViewBag.leavetable)
         )
@@ -361,6 +516,20 @@
         .EnableIFrame(true)
         .Title("打印假条")
         .ID("printWindow")
+        )
+    @(
+    F.Window()
+        .Hidden(true)
+        .Height(900)
+        .Width(600)
+        .IsModal(true)
+        //.OnClose(Url.Action("printWindow_Close"))
+        .Target(Target.Top)
+        .EnableResize(true)
+        .EnableMaximize(true)
+        .EnableIFrame(true)
+        .Title("编辑")
+        .ID("modifyWindow")
     )
 @(
  F.Window()
@@ -402,7 +571,7 @@
                                 .Text("发送留言")
                                 .ID("btnHide")
                                 //.Listener("click", "F.activeWindow.hide();")
-                                .OnClick(Url.Action("btnCancelClick"), "cancelreason", new Parameter("fields", "F.ui.gridLeaveList.fields"))
+                                    .OnClick(Url.Action("btnCancelClick"), "cancelreason", new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
                                 )
                 )
                 

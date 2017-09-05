@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="bind.aspx.cs" Inherits="qingjia_WeChat.SubPage.bind" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="bind.aspx.cs" Inherits="qingjia_YiBan.SubPage.bind" %>
 
 <!DOCTYPE html>
 
@@ -24,7 +24,7 @@
             <br /><br /><br />
             <article class="weui-article">
                 <h1 style="text-align:center;">管理学院</h1>
-                <h1 style="text-align:center;">学生请假系统-微信端</h1>                    
+                <h1 style="text-align:center;">学生请假系统-易班端</h1>                    
             </article>
             <input class="weui-input" type="text" style="color:red; margin-left:18px; font-size:15px;" runat="server" disabled="disabled" id="txtError" value="" />
             <div class="weui-cell">

@@ -7,7 +7,7 @@
 // </自动生成>
 //------------------------------------------------------------------------------
 
-namespace qingjia_WeChat.HomePage {
+namespace qingjia_YiBan.HomePage {
     
     
     public partial class qingjia_WeChat {

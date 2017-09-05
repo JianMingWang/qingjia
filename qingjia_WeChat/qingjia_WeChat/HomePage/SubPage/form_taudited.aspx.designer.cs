@@ -7,7 +7,7 @@
 // </自动生成>
 //------------------------------------------------------------------------------
 
-namespace qingjia_WeChat.SubPage {
+namespace qingjia_YiBan.SubPage {
     
     
     public partial class WebForm8 {

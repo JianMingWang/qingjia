@@ -6,9 +6,10 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Data;
-using qingjia_WeChat.HomePage.Class;
+using qingjia_YiBan.HomePage.Class;
+using qingjia_YiBan.HomePage.Model.API;
 
-namespace qingjia_WeChat.SubPage
+namespace qingjia_YiBan.SubPage
 {
     public partial class form_notaudited : System.Web.UI.Page
     {
@@ -22,19 +23,27 @@ namespace qingjia_WeChat.SubPage
 
         private void LoadDB()
         {
-            string ST_NUM = Request.Cookies["UserInfo"]["UserID"].ToString();
-
-            string strWHere = " StudentID = '" + ST_NUM + "' and StateLeave ='0' and StateBack='0'";
-            DataSet ds = LeaveList.GetList3(strWHere);
-            DataTable dtSource = ds.Tables[0];
-            for (int i = 0; i < dtSource.Rows.Count; i++)
+            string access_token = Session["access_token"].ToString();
+            Client<List<LeaveList>> client = new Client<List<LeaveList>>();
+            ApiResult<List<LeaveList>> result = client.GetRequest("access_token=" + access_token, "/api/leavelist/getlist");
+            if (result.result == "success")
             {
-                string LV_NUM = dtSource.Rows[i]["ID"].ToString();
-                string LeaveType = DB.getKey("LeaveType", dtSource.Rows[i]["TypeChildID"].ToString());
-                string go_time = dtSource.Rows[i]["TimeLeave"].ToString();
-                string back_time = dtSource.Rows[i]["TimeBack"].ToString();
-                leave_list_div.Controls.Add(CreatLeaveList(LV_NUM, LeaveType, go_time, back_time));
-                leave_list_div.Controls.Add(CreatBr());
+                if (result.data != null)
+                {
+                    List<LeaveList> list = result.data;
+                    foreach (LeaveList item in list)
+                    {
+                        if (item.State == "待审核")
+                        {
+                            string LV_NUM = item.ID;
+                            string LeaveType = item.Type;
+                            string go_time = item.TimeBack.ToString("yyyy-MM-dd HH:MM:ss");
+                            string back_time = item.SubmitTime;
+                            leave_list_div.Controls.Add(CreatLeaveList(LV_NUM, LeaveType, go_time, back_time));
+                            leave_list_div.Controls.Add(CreatBr());
+                        }
+                    }
+                }
             }
         }
 
@@ -92,7 +101,7 @@ namespace qingjia_WeChat.SubPage
             Div_04_02.Controls.Add(Text_04);
 
             //创建按钮
-            HtmlGenericControl Div_05_01 = CreatSubmit("", "weui-btn weui-btn_primary", "", "form_succeed.aspx?LV_NUM='" + LV_NUM + "'");
+            HtmlGenericControl Div_05_01 = CreatSubmit("", "weui-btn weui-btn_primary", "", "form_succeed.aspx?LV_NUM=" + LV_NUM);
 
             //创建换行
             HtmlGenericControl br1 = CreatBr();
@@ -156,7 +165,7 @@ namespace qingjia_WeChat.SubPage
         /// <param name="cssClass"></param>
         /// <param name="style"></param>
         /// <returns></returns>
-        private HtmlGenericControl CreatText(string id, string cssClass, string style,string Value)
+        private HtmlGenericControl CreatText(string id, string cssClass, string style, string Value)
         {
             HtmlGenericControl Creat_Text = new HtmlGenericControl("input");
             //Creat_Text.Attributes.Add("id", id);
@@ -194,7 +203,7 @@ namespace qingjia_WeChat.SubPage
         /// <param name="Value"></param>
         /// <param name="clickEvent"></param>
         /// <returns></returns>
-        private HtmlGenericControl CreatSubmit(string id, string cssClass, string Value,string href)
+        private HtmlGenericControl CreatSubmit(string id, string cssClass, string Value, string href)
         {
             HtmlGenericControl Creat_Submit = new HtmlGenericControl("a");
             //Creat_Submit.Attributes.Add("id", id);
@@ -202,7 +211,7 @@ namespace qingjia_WeChat.SubPage
             //Creat_Submit.Attributes.Add("runat", "server");
             //Creat_Submit.Attributes.Add("type", "submit");
             //Creat_Submit.Attributes.Add("Value", Value);
-            //Creat_Submit.Attributes.Add("onserverclick", clickEvent);
+            //Creat_Submit.Attributes.Add("onclick", "Revoke(" + Value + ");");
             Creat_Submit.Attributes.Add("href", href);
             Creat_Submit.InnerText = "立即撤销";
             return Creat_Submit;

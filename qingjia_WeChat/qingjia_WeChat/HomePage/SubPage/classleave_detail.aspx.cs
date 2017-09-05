@@ -5,11 +5,12 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-using qingjia_WeChat.HomePage.Class;
+using qingjia_YiBan.HomePage.Class;
 using System.Data;
 using System.Data.SqlClient;
+using qingjia_YiBan.HomePage.Model.API;
 
-namespace qingjia_WeChat.SubPage
+namespace qingjia_YiBan.SubPage
 {
     public partial class classleave_detail : System.Web.UI.Page
     {
@@ -23,15 +24,26 @@ namespace qingjia_WeChat.SubPage
 
         private void LoadDB()
         {
-            string ST_NUM = Request.Cookies["UserInfo"]["UserID"].ToString();
-            DB dbInfo = new DB();
-            DataSet dsInfo = dbInfo.GetList("ST_Num='" + ST_NUM + "'");
-            DataTable dtSource = dsInfo.Tables[0];
-
-            Label_Num.InnerText = dtSource.Rows[0]["ST_Num"].ToString();
-            Label_Name.InnerText = dtSource.Rows[0]["ST_Name"].ToString();
-            Label_Class.InnerText = dtSource.Rows[0]["ST_Class"].ToString();
-            Label_Tel.InnerText = dtSource.Rows[0]["ST_TEL"].ToString();
+            if (HttpContext.Current.Request.Cookies["UserInfo"] != null)
+            {
+                HttpCookie cookie = HttpContext.Current.Request.Cookies["UserInfo"];
+                Label_Num.InnerText = cookie["UserID"].ToString();
+                Label_Name.InnerText = HttpUtility.UrlDecode(cookie["UserName"].ToString());
+                Label_Class.InnerText = HttpUtility.UrlDecode(cookie["UserClass"].ToString());
+                Label_Tel.InnerText = cookie["UserTel"].ToString();
+            }
+            else
+            {
+                string access_token = Session["access_token"].ToString();
+                string ST_NUM = access_token.Substring(0, access_token.IndexOf("_"));
+                Client<UserInfo> client = new Client<UserInfo>();
+                ApiResult<UserInfo> result = client.GetRequest("access_token=" + access_token, "api/student/me");
+                UserInfo userInfo = result.data;
+                Label_Num.InnerText = userInfo.UserID;
+                Label_Name.InnerText = userInfo.UserName;
+                Label_Class.InnerText = userInfo.UserClass;
+                Label_Tel.InnerText = userInfo.UserTel;
+            }
         }
 
         protected void btnSubmit_ServerClick(object sender, EventArgs e)
@@ -47,29 +59,21 @@ namespace qingjia_WeChat.SubPage
         {
             if (CheckText(test_default1) && CheckText(txtTeacherName) && LeaveReason.Value.ToString().Trim() != "")
             {
-                if (Convert.ToDateTime(ChangeTime(test_default1.Value.ToString())) > DateTime.Now)
+                if (LeaveReason.Value.ToString() != "")
                 {
-                    if (LeaveReason.Value.ToString() != "")
+                    if (LeaveReason.Value.ToString().Length <= 60)
                     {
-                        if (LeaveReason.Value.ToString().Length <= 60)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            txtError.Value = "请假原因不能超过60个字！";
-                            return false;
-                        }
+                        return true;
                     }
                     else
                     {
-                        txtError.Value = "请假原因不能为空！";
+                        txtError.Value = "请假原因不能超过60个字！";
                         return false;
                     }
                 }
                 else
                 {
-                    txtError.Value = "请假课程开始时间不能小于当前时间！";
+                    txtError.Value = "请假原因不能为空！";
                     return false;
                 }
             }
@@ -92,134 +96,70 @@ namespace qingjia_WeChat.SubPage
             }
         }
 
-        protected void Insertdata_out()//离校请假用的
+        protected void Insertdata_out()//上课请假备案
         {
-            string LV_NUM = DateTime.Now.ToString("yyMMdd");//流水号的生成
-            DateTime gotime_out = Convert.ToDateTime(ChangeTime(test_default1.Value.ToString()));
+            string access_token = Session["access_token"].ToString();
+            string leave_child_type = "";
+            string leave_date = "";
+            string leave_reason = LeaveReason.Value.ToString().Trim();
+            string teacher_name = txtTeacherName.Value.ToString().Trim();
+            string lesson = "";
 
-            string ClassPeriod = "";
+            DateTime gotime_out = Convert.ToDateTime(ChangeTime(test_default1.Value.ToString()));
+            leave_date = gotime_out.ToString("yyyy-MM-dd");
+
             if (x41.Checked == true)
             {
-                ClassPeriod = "1";
+                lesson = "1";
             }
             if (x42.Checked == true)
             {
-                ClassPeriod = "2";
+                lesson = "2";
             }
             if (x43.Checked == true)
             {
-                ClassPeriod = "3";
+                lesson = "3";
             }
             if (x44.Checked == true)
             {
-                ClassPeriod = "4";
+                lesson = "4";
             }
             if (x45.Checked == true)
             {
-                ClassPeriod = "5";
+                lesson = "5";
             }
 
-            //检查是否存在相同申请   
-            DataSet ds_ll = LeaveList.GetList(" ((StudentID='" + Label_Num.InnerText.ToString() + "') and ( Lesson ='" + ClassPeriod + "') and (TypeID = '" + 3
-                + "' ))");
-
-            if (ds_ll.Tables[0].Rows.Count > 0)
-            {
-                for (int i = 0; i < ds_ll.Tables[0].Rows.Count; i++)
-                {
-                    if (ds_ll.Tables[0].Rows[i]["StateBack"].ToString().Trim() == "0")
-                    {
-                        txtError.Value = "您已提交过此时间段的请假申请！";
-                        break;
-                    }
-                    else
-                    {
-                        Insert_out(LV_NUM, gotime_out, ClassPeriod);
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                Insert_out(LV_NUM, gotime_out, ClassPeriod);
-            }
-        }
-
-        public void Insert_out(string LV_NUM, DateTime gotime_out, string Period)
-        {
-            DataSet ds_ll_2 = LeaveList.GetList2("ID like '%" + LV_NUM + "%' order by ID DESC ");
-            string end3str = "0001";
-            if (ds_ll_2.Tables[0].Rows.Count > 0)
-            {
-                string leavenumtop = ds_ll_2.Tables[0].Rows[0][0].ToString().Trim();
-                int end3 = Convert.ToInt32(leavenumtop.Substring(6, 4));
-                end3++;
-                end3str = end3.ToString("0000");//按照此格式Tostring
-            }
-            LV_NUM += end3str;
-
-            int LV_Class = 0;
             if (x31.Checked == true)
             {
-                LV_Class = 13;//公假
+                leave_child_type = "公假";
             }
             if (x32.Checked == true)
             {
-                LV_Class = 14;//事假
+                leave_child_type = "事假";
             }
             if (x33.Checked == true)
             {
-                LV_Class = 15;//病假
+                leave_child_type = "病假";
             }
 
-            DateTime nowtime = DateTime.Now;
-            LL_Model model_ll = new LL_Model();
-            model_ll.StudentID = Label_Num.InnerText.ToString().Trim();
-            model_ll.TimeLeave = gotime_out;
-            model_ll.TimeBack = gotime_out;
-            model_ll.TypeID = 3;
-            model_ll.ID = LV_NUM;
-            model_ll.SubmitTime = nowtime;
-            model_ll.LeaveWay = "";
-            model_ll.BackWay = "";
-            model_ll.Address = "";
-            model_ll.StateLeave = "0";
-            model_ll.StateBack = "0";
-            model_ll.Reason = LeaveReason.Value.ToString().Trim();
-            model_ll.TypeChildID = LV_Class;
-            model_ll.Teacher = txtTeacherName.Value.ToString().Trim();
-            model_ll.Lesson = Period;
-            model_ll.Notes = "";
+            string _postString = String.Format("access_token={0}&leave_child_type={1}&leave_date={2}&leave_reason={3}&teacher_name={4}&lesson={5}", access_token, leave_child_type, leave_date, leave_reason, teacher_name, lesson);
 
-            LeaveList.Add(model_ll);
-            Response.Redirect("classleave_succeed.aspx");
+            Client<string> client = new Client<string>();
+            ApiResult<string> result = new ApiResult<string>();
+            result = client.PostRequest(_postString, "/api/leavelist/leavelesson");
+            if (result.result == "success")
+            {
+                Response.Redirect("classleave_succeed.aspx");
+            }
+            else
+            {
+                txtError.Value = result.messages;
+            }
         }
 
-        //转换时间格式
         private string ChangeTime(string time)
         {
-            string txt_time = test_default1.Value.ToString();
-            string time_changed = time.Substring(6, 4) + "-" + time.Substring(0, 2) + "-" + time.Substring(3, 2) + " ";
-            if (x41.Checked == true)
-            {
-                time_changed += "08:00:00.000";
-            }
-            if (x42.Checked == true)
-            {
-                time_changed += "10:10:00.000";
-            }
-            if (x43.Checked == true)
-            {
-                time_changed += "14:00:00.000";
-            }
-            if (x44.Checked == true)
-            {
-                time_changed += "16:00:00.000";
-            }
-            if (x45.Checked == true)
-            {
-                time_changed += "18:30:00.000";
-            }
+            string time_changed = time.Substring(6, 4) + "-" + time.Substring(0, 2) + "-" + time.Substring(3, 2);
             return time_changed;
         }
     }

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="info_detail.aspx.cs" Inherits="qingjia_WeChat.SubPage.info_detail" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="info_detail.aspx.cs" Inherits="qingjia_YiBan.SubPage.info_detail" %>
 
 <!DOCTYPE html>
 

@@ -1,82 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using qingjia_WeChat.HomePage.Class;
-using System.Data;
+using qingjia_YiBan.HomePage.Class;
+using qingjia_YiBan.HomePage.Model.API;
 
-namespace qingjia_WeChat.SubPage
+namespace qingjia_YiBan.SubPage
 {
     public partial class bind : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Session["OpenID"] = Request.QueryString["openId"].ToString();
-            if (Request.QueryString["openId"].ToString() != "" && Request.QueryString["openId"] != null)
-            {
-                Session["OpenID"] = Request.QueryString["openId"].ToString();
-                Login();
-            }
-            else
-            {
-                //Response.Redirect("UserAuth.ashx");
-                Response.Redirect("UserProcess.ashx");
-            }
-        }
 
-        protected void Login()
-        {
-            string OpenID = Session["OpenID"].ToString();
-
-            DB db = new DB();
-            DataSet ds_OpenID = DB.RegisterCheck(" Wechat = '" + OpenID + "'");
-            if (ds_OpenID.Tables[0].Rows.Count > 0)
-            {
-                Session["ST_Num"] = ds_OpenID.Tables[0].Rows[0]["ID"].ToString();
-                Response.Redirect("../qingjia_WeChat.aspx");
-            }
         }
 
         protected void btnSubmit_ServerClick(object sender, EventArgs e)
         {
-            DB db = new DB();
             if (Check())
             {
-                DataSet ds = db.GetList("ST_Num ='" + User_Num.Value.ToString().Trim() + "'");
-                if (ds.Tables[0].Rows.Count > 0)
+                string UserID = User_Num.Value.ToString().Trim();
+                string UserPsd = User_Pw.Value.ToString().Trim();
+                string YiBanID = Request.QueryString["OpenID"].ToString();
+
+                Client<AccessToken> client = new Client<AccessToken>();
+                string _postString = String.Format("UserID={0}&UserPsd={1}&OpenID={2}", UserID, UserPsd, YiBanID);
+                ApiResult<AccessToken> result = client.PostRequest(_postString, "/api/oauth/authorize_wechat");
+                if (result.result == "error")
                 {
-                    if (DB.CheckPassword(User_Num.Value.ToString().Trim(), User_Pw.Value.ToString().Trim()))
-                    {
-                        int i = DB.RegisterCheck(" ST_Num ='" + User_Num.Value.ToString().Trim() + "'").Tables[0].Rows.Count;
-                        if (i == 0)
-                        {
-                            string OpenID = Request.QueryString["OpenID"].ToString();
-                            string ST_Num = User_Num.Value.ToString().Trim();
-                            if (DB.Register(ST_Num, OpenID))
-                            {
-                                Session["ST_Num"] = User_Num.Value;
-                                Response.Redirect("../qingjia_WeChat.aspx");
-                            }
-                            else
-                            {
-                                txtError.Value = "注册失败！";
-                            }
-                        }
-                        else
-                        {
-                            txtError.Value = "账户已被注册！如有疑问请联系管理员！";
-                        }
-                    }
-                    else
-                    {
-                        txtError.Value = "密码错误！";
-                    }
+                    txtError.Value = result.messages;
                 }
                 else
                 {
-                    txtError.Value = "账户不存在！";
+                    AccessToken qingjiaAccessToken = new AccessToken();
+                    qingjiaAccessToken = result.data;
+                    Response.Redirect("../qingjia_WeChat.aspx?access_token=" + qingjiaAccessToken.access_token);
                 }
             }
         }

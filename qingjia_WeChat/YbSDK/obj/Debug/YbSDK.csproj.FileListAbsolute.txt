@@ -1,0 +1,41 @@
+F:\Github\游嘉明\YbSDK\YbSDK\bin\Debug\YbSDK.dll
+F:\Github\游嘉明\YbSDK\YbSDK\bin\Debug\YbSDK.pdb
+F:\Github\游嘉明\YbSDK\YbSDK\bin\Debug\RestSharp.dll
+F:\Github\游嘉明\YbSDK\YbSDK\bin\Debug\RestSharp.xml
+F:\Github\游嘉明\YbSDK\YbSDK\obj\Debug\YbSDK.dll
+F:\Github\游嘉明\YbSDK\YbSDK\obj\Debug\YbSDK.pdb
+C:\Users\Wong Jianming\Desktop\请假-易班项目\YbSDK\YbSDK\bin\Debug\YbSDK.dll
+C:\Users\Wong Jianming\Desktop\请假-易班项目\YbSDK\YbSDK\bin\Debug\YbSDK.pdb
+C:\Users\Wong Jianming\Desktop\请假-易班项目\YbSDK\YbSDK\bin\Debug\RestSharp.dll
+C:\Users\Wong Jianming\Desktop\请假-易班项目\YbSDK\YbSDK\bin\Debug\RestSharp.xml
+C:\Users\Wong Jianming\Desktop\请假-易班项目\YbSDK\YbSDK\obj\Debug\YbSDK.dll
+C:\Users\Wong Jianming\Desktop\请假-易班项目\YbSDK\YbSDK\obj\Debug\YbSDK.pdb
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\bin\Debug\YbSDK.dll
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\bin\Debug\YbSDK.pdb
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\bin\Debug\RestSharp.dll
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\bin\Debug\RestSharp.xml
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\obj\Debug\YbSDK.dll
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\obj\Debug\YbSDK.pdb
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\bin\Debug\System.Web.Extensions.dll
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\bin\Debug\Microsoft.CSharp.dll
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\bin\Debug\System.Configuration.dll
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\bin\Debug\System.Data.DataSetExtensions.dll
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\bin\Debug\System.Data.dll
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\bin\Debug\System.dll
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\bin\Debug\System.Xml.dll
+C:\Users\Wong Jianming\Desktop\YiBan\YbSDK\YbSDK\bin\Debug\System.Xml.Linq.dll
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\bin\Debug\YbSDK.dll
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\bin\Debug\YbSDK.pdb
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\bin\Debug\Microsoft.CSharp.dll
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\bin\Debug\RestSharp.dll
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\bin\Debug\System.Configuration.dll
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\bin\Debug\System.Data.DataSetExtensions.dll
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\bin\Debug\System.Data.dll
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\bin\Debug\System.dll
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\bin\Debug\System.Web.Extensions.dll
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\bin\Debug\System.Xml.dll
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\bin\Debug\System.Xml.Linq.dll
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\bin\Debug\RestSharp.xml
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\obj\Debug\YbSDK.dll
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\obj\Debug\YbSDK.pdb
+C:\Users\Wong Jianming\Desktop\YiBan\wechat\qingjia_WeChat_1.5\YbSDK\obj\Debug\YbSDK.csprojResolveAssemblyReference.cache

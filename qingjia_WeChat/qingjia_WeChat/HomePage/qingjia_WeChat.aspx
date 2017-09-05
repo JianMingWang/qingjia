@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="qingjia_WeChat.aspx.cs" Inherits="qingjia_WeChat.HomePage.qingjia_WeChat" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="qingjia_WeChat.aspx.cs" Inherits="qingjia_YiBan.HomePage.qingjia_WeChat" %>
 
 <!DOCTYPE html>
 
@@ -85,7 +85,7 @@
         </div>
 
         <div id="Default_Version">
-            <div class="weui-cells__title" style="text-align:right; font-size:15px; font-family:宋体; color:rgb(169,169,169);">V.170426</div>
+            <div class="weui-cells__title" style="text-align:right; font-size:15px; font-family:宋体; color:rgb(169,169,169);">V.170905</div>
         </div>
 
         </div>
@@ -100,19 +100,19 @@
     </div>
 	<script type="text/html" id="tpl_tabbar">
 	<div class="weui_tabbar">
-        <a href="javascript:;" onclick="showdiv('qingjia_index_leave')" class="weui_tabbar_item">
+        <a href="javascript:void(0);" onclick="showdiv('qingjia_index_leave')" class="weui_tabbar_item">
             <div class="weui_tabbar_icon">
                 <img src="./images/icon_nav_article.png" alt="" />
             </div>
             <p class="weui_tabbar_label">请假</p>
         </a>
-        <a href="javascript:;" onclick="showdiv('qingjia_index_notice')" class="weui_tabbar_item weui_bar_item_on">
+        <a href="javascript:void(0);" onclick="showdiv('qingjia_index_notice')" class="weui_tabbar_item weui_bar_item_on">
             <div class="weui_tabbar_icon">
                 <img src="./images/icon_nav_button.png" alt="" />
             </div>
             <p class="weui_tabbar_label">通知</p>
         </a>
-        <a href="javascript:;" onclick="showdiv('qingjia_index_info')" class="weui_tabbar_item">
+        <a href="javascript:void(0);" onclick="showdiv('qingjia_index_info')" class="weui_tabbar_item">
             <div class="weui_tabbar_icon">
                 <img src="./images/icon_nav_cell.png" alt="" />
             </div>

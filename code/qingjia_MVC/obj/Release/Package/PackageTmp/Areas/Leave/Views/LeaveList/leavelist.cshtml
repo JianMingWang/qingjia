@@ -48,13 +48,13 @@
         }
 
     //打印假条
-    function print(rowData) {
-        var iframeWindowUrl = '@Url.Content("~/Print/print")';
-        var iframeUrl = iframeWindowUrl + '?id=' + rowData.id;
-
-        // 显示窗体
-        F.ui.printWindow.show(iframeUrl, '打印假条 - ' + rowData.id);
-    }
+        function print(rowData) {
+            var iframeWindowUrl = '@Url.Content("~/Print/print")';
+            var iframeUrl = iframeWindowUrl + '?id=' + rowData.id;
+            //alert('加载请假条大概需要20s左右，请耐心等候...');
+            // 显示窗体
+            F.ui.printWindow.show(iframeUrl, '打印假条 - ' + rowData.id);
+        }
 
     //搜索框一事件
     function onTwinTriggerBox1Blur(event) {
@@ -156,12 +156,14 @@
                 F.Grid()
             .EnableCollapse(false)
             .Title("请假记录")
-            //.CssClass("selftable self")
             .ShowHeader(true)
             .ShowBorder(true)
             .ID("gridLeaveList")
             .EnableCheckBoxSelect(true)
             .AutoScroll(false)
+            //.AllowSorting(true)
+            //.SortField("ID")
+            //.SortDirection("ASC")
             .Height(500)
             .AllowPaging(true)
             .PageSize(20)
@@ -305,6 +307,7 @@
                     .HeaderText("班级")
                     .TextAlign(TextAlign.Center)
                     .DataField("ST_Class")
+                    .SortField("ST_Class")
                     .Width(100),
                     F.RenderField()
                     .HeaderText("请假类型")

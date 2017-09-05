@@ -26,6 +26,12 @@
                 AjaxRequestGet('api/oauth/access_token?YiBanID=123');
             });
 
+            $('#btnOauthAccess_Token_WeChat').click(function (e) {
+                //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestGet('api/oauth/access_token_wechat?OpenID=ooGelwINVvoiWEzclcpDSaAzz9Dc');
+            });
+
             $('#btnStudentMe').click(function (e) {
                 //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
                 //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
@@ -155,6 +161,9 @@
         <br />
         <br />
         <input type="button" value="Access_Token" id="btnOauthAccess_Token" />
+        <br />
+        <br />
+        <input type="button" value="Access_Token_WeChat" id="btnOauthAccess_Token_WeChat" />
         <br />
         <br />
         <h3>学生信息接口测试：</h3>

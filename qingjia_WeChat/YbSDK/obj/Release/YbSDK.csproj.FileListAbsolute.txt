@@ -1,0 +1,7 @@
+F:\Github\游嘉明\YbSDK\YbSDK\bin\Release\YbSDK.dll
+F:\Github\游嘉明\YbSDK\YbSDK\bin\Release\YbSDK.pdb
+F:\Github\游嘉明\YbSDK\YbSDK\bin\Release\RestSharp.dll
+F:\Github\游嘉明\YbSDK\YbSDK\bin\Release\RestSharp.xml
+F:\Github\游嘉明\YbSDK\YbSDK\obj\Release\YbSDK.dll
+F:\Github\游嘉明\YbSDK\YbSDK\obj\Release\YbSDK.pdb
+F:\Github\游嘉明\YbSDK\YbSDK\bin\Release\YbSDK.XML

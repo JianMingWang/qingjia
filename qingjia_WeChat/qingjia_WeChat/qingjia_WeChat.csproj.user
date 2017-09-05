@@ -9,7 +9,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <StartPageUrl>HomePage/qingjia_WeChat.aspx</StartPageUrl>
+          <StartPageUrl>HomePage/UserAuth.ashx</StartPageUrl>
           <StartAction>SpecificPage</StartAction>
           <AspNetDebugging>True</AspNetDebugging>
           <SilverlightDebugging>False</SilverlightDebugging>
@@ -17,8 +17,7 @@
           <SQLDebugging>False</SQLDebugging>
           <ExternalProgram>
           </ExternalProgram>
-          <StartExternalURL>
-          </StartExternalURL>
+          <StartExternalURL>C:\Users\Wong Jianming\Desktop\YiBan\qingjia_YiBan\qingjia_YiBan\HomePage\UserAuth.ashx</StartExternalURL>
           <StartCmdLineArguments>
           </StartCmdLineArguments>
           <StartWorkingDirectory>

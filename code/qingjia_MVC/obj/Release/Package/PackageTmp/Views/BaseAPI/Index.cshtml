@@ -1,0 +1,191 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <meta name="viewport" content="width=device-width" />
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <title>API 接口测试</title>
+    <script>
+        $(document).ready(function () {
+            var access_token = '0121403490106_58eda4d3-103c-4cd7-8b65-fe9bed4ca520';
+
+            $('#btnOauthAuthorize').click(function (e) {
+                var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestPost('api/oauth/Authorize', data);
+            });
+
+            $('#btnOauthAccess_Token').click(function (e) {
+                //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestGet('api/oauth/access_token?YiBanID=123');
+            });
+
+            $('#btnStudentMe').click(function (e) {
+                //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestGet('api/student/me?access_token=' + access_token);
+            });
+
+            $('#btnstudentNight').click(function (e) {
+                //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestGet('api/student/night?access_token=' + access_token);
+            });
+
+            $('#btnstudentHoliday').click(function (e) {
+                //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestGet('api/student/holiday?access_token=' + access_token);
+            });
+
+            $('#btnstudentPassWord').click(function (e) {
+                var data = { "old_psd": "490105", "new_psd": "490106", "access_token": "0121403490106_bc36bfb5-acc8-48ea-8b2b-21c5dfb1297c" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestPost('api/student/password', data);
+            });
+
+            $('#btnLeavelistGetList').click(function (e) {
+                //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestGet('api/leavelist/getlist?access_token=' + access_token);
+            });
+
+            $('#btnLeavelistRevoke').click(function (e) {
+                //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestGet('api/leavelist/revoke?access_token=' + access_token + '&leavelistID=' + '1707020001');
+            });
+
+            $('#btnLeavelistLeaveschool').click(function (e) {
+                var data = {
+                    "access_token": "0121403490106_58eda4d3-103c-4cd7-8b65-fe9bed4ca520",
+                    "leave_type": "长期请假",
+                    "leave_date": "2016-01-04",
+                    "leave_time": "12:00",
+                    "back_date": "2017-07-12",
+                    "back_time": "12:00",
+                    "leave_reason": "测试数据",
+                    "leave_way": "测试数据",
+                    "back_way": "测试数据",
+                    "address": "测试数据"
+                };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestPost('api/leavelist/leaveschool', data);
+            });
+
+            $('#btnLeavelistLeavespecial').click(function (e) {
+                var data = {
+                    "access_token": "0121403490106_bc36bfb5-acc8-48ea-8b2b-21c5dfb1297c",
+                    "leave_type": "",
+                    "leave_child_type": "",
+                    "leave_date": "",
+                    "leave_time": "",
+                    "back_date": "",
+                    "back_time": "",
+                    "leave_reason": ""
+                };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestPost('api/leavelist/leavespecial', data);
+            });
+
+            $('#btnLeavelistLeavelesson').click(function (e) {
+                var data = {
+                    "access_token": "0121403490106_bc36bfb5-acc8-48ea-8b2b-21c5dfb1297c",
+                    "leave_date": "",
+                    "leave_reason": "",
+                    "teacher_name": "",
+                    "lesson": ""
+                };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestPost('api/leavelist/leavelesson', data);
+            });
+        });
+
+        //Get请求
+        function AjaxRequestGet(uri) {
+            var server = 'http://localhost:12516/';
+            var url = server + uri;
+            $.ajax({
+                type: 'GET',
+                contentType: 'application/json',
+                dataType: 'json',
+                url: url,
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function () {
+                    console.log('Ajax请求失败！');
+                }
+            });
+        }
+
+        //Post请求
+        function AjaxRequestPost(uri, data) {
+            var server = 'http://localhost:12516/';
+            var url = server + uri;
+            $.ajax({
+                type: 'POST',
+                //contentType: 'application/json',//此句话需要配合 json序列化方法使用
+                dataType: 'json',
+                data: data,
+                url: url,
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (response) {
+                    console.log('Ajax请求失败！');
+                    console.log(response);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <h1>API 接口测试：</h1>
+        <br />
+        <h3>权限接口测试：</h3>
+        <input type="button" value="Authorize" id="btnOauthAuthorize" />
+        <br />
+        <br />
+        <input type="button" value="Access_Token" id="btnOauthAccess_Token" />
+        <br />
+        <br />
+        <h3>学生信息接口测试：</h3>
+        <input type="button" value="Me" id="btnStudentMe" />
+        <br />
+        <br />
+        <input type="button" value="Night" id="btnstudentNight" />
+        <br />
+        <br />
+        <input type="button" value="Holiday" id="btnstudentHoliday" />
+        <br />
+        <br />
+        <input type="button" value="PassWord" id="btnstudentPassWord" />
+        <br />
+        <br />
+        <h3>请假接口测试：</h3>
+        <input type="button" value="GetList" id="btnLeavelistGetList" />
+        <br />
+        <br />
+        <input type="button" value="Revoke" id="btnLeavelistRevoke" />
+        <br />
+        <br />
+        <input type="button" value="leaveschool" id="btnLeavelistLeaveschool" />
+        <br />
+        <br />
+        <input type="button" value="leavespecial" id="btnLeavelistLeavespecial" />
+        <br />
+        <br />
+        <input type="button" value="leavelesson" id="btnLeavelistLeavelesson" />
+        <br />
+        <br />
+    </div>
+</body>
+</html>

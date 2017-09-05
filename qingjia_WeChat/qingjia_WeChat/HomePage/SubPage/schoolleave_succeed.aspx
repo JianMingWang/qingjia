@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="schoolleave_succeed.aspx.cs" Inherits="qingjia_WeChat.SubPage.schoolleave_succeed" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="schoolleave_succeed.aspx.cs" Inherits="qingjia_YiBan.SubPage.schoolleave_succeed" %>
 
 <!DOCTYPE html>
 

@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "qingjia_WeChat", "qingjia_WeChat\qingjia_WeChat.csproj", "{8417E79A-2D6F-4D53-AC26-50D06AEA15FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YbSDK", "YbSDK\YbSDK.csproj", "{07E24380-C18A-40F1-B0EC-86C482B32EC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{8417E79A-2D6F-4D53-AC26-50D06AEA15FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8417E79A-2D6F-4D53-AC26-50D06AEA15FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8417E79A-2D6F-4D53-AC26-50D06AEA15FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07E24380-C18A-40F1-B0EC-86C482B32EC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07E24380-C18A-40F1-B0EC-86C482B32EC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07E24380-C18A-40F1-B0EC-86C482B32EC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07E24380-C18A-40F1-B0EC-86C482B32EC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

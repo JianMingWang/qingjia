@@ -1,0 +1,478 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>YbSDK</name>
+    </assembly>
+    <members>
+        <member name="T:YbSDK.Api.ApiContext">
+            <summary>
+            Api上下文
+            </summary>
+        </member>
+        <member name="T:YbSDK.Api.BaseApi">
+            <summary>
+            Api基类
+            </summary>
+        </member>
+        <member name="M:YbSDK.Api.BaseApi.CheckError(RestSharp.IRestResponse,System.String)">
+            <summary>
+            检测是否响应存在错误,当响应结果字符串中包含检测字符串则返回true
+            </summary>
+            <param name="response">被检测响应</param>
+            <param name="checkStr">检测字符串</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.BaseApi.CreateRequest(RestSharp.Method,System.String)">
+            <summary>
+            生成请求
+            </summary>
+            <param name="method"></param>
+            <param name="resource"></param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.BaseApi.Deserialize``1(System.String)">
+            <summary>
+            json字符串转类
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="content"></param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.BaseApi.GenerateError(RestSharp.IRestResponse)">
+            <summary>
+            生成异常
+            </summary>
+            <param name="response"></param>
+        </member>
+        <member name="M:YbSDK.Api.FriendApi.GetMyFriends(System.Int32,System.Int32)">
+            <summary>
+            获取当前用户好友列表。
+            </summary>
+            <param name="page">页码（默认1）</param>
+            <param name="count">每页数据量(默认15，最大30)</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.FriendApi.CheckFriend(System.Int32)">
+            <summary>
+            当前用户与指定用户是否为好友关系。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.FriendApi.GetRecommendFriends(System.Int32)">
+            <summary>
+            获取推荐好友列表。
+            </summary>
+            <param name="count">获取数据量（默认20，最大20）</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.FriendApi.ApplyFriend(System.Int32,System.String)">
+            <summary>
+            发送好友申请。
+            </summary>
+            <param name="uId">	接收方易班用户ID</param>
+            <param name="content">申请理由（最多50字数）</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.FriendApi.RemoveFriend(System.Int32)">
+            <summary>
+            删除指定好友
+            </summary>
+            <param name="friendUId">好友Id</param>
+            <returns></returns>
+        </member>
+        <member name="T:YbSDK.Api.GroupApi">
+            <summary>
+            群话题接口
+            </summary>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.#ctor(YbSDK.Model.AccessToken)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="token"></param>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="token"></param>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.GetPublicGroups(System.Int32,System.Int32)">
+            <summary>
+              获取当前用户已加入的公共群
+            </summary>
+            <param name="page">页码（默认1）</param>
+            <param name="count">每页数据量（默认15，最大30）</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.GetOrganGroups(System.Int32,System.Int32)">
+            <summary>
+            获取当前用户已加入的机构群
+            </summary>
+            <param name="page">页码（默认1）</param>
+            <param name="count">每页数据量（默认15，最大30）</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.GetMyGroups(System.Int32,System.Int32)">
+            <summary>
+                获取当前用户创建的机构群/公共群
+            </summary>
+            <param name="page">页码（默认1）</param>
+            <param name="count">每页数据量（默认15，最大30）</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.GetGroupInfo(System.Int32)">
+            <summary>
+            获取指定机构群/公共群信息
+            </summary>
+            <param name="groupId">群ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.GetGroupMembers(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            获取指定机构群/公共群成员列表
+            </summary>
+            <param name="groupId">群ID</param>
+            <param name="page">页码（默认1）</param>
+            <param name="count">每页数据量（默认15，最大30）</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.GetGroupTopics(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            获取指定机构群/公共群话题列表
+            </summary>
+            <param name="groupId">群ID</param>
+            <param name="page">页码（默认1）</param>
+            <param name="count">每页数据量（默认15，最大30）</param>
+            <param name="order">排序方式（默认1，1-发表时间倒序；2-最后评论时间倒序；3-回帖数倒序)</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.GetHotTips(System.Int32,System.Int32,System.Int32)">
+            <summary>
+             获取全站/机构号热门话题列表
+            </summary>
+            <param name="page">页码（默认1）</param>
+            <param name="count">每页数据量（默认15，最大30）</param>
+            <param name="organUserid">机构号易班ID（默认表示获取全站）</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.GetTopicInfo(System.Int32,System.Int32)">
+            <summary>
+             获取指定话题内容
+            </summary>
+            <param name="groupId">群ID</param>
+            <param name="topicId">话题ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.GetTopicComment(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            获取指定话题评论内容
+            </summary>
+            <param name="groupId">群ID</param>
+            <param name="topicId">话题ID</param>
+            <param name="page">页码（默认1）</param>
+            <param name="count">每页数据量（默认15，最大30）</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.SendTopic(System.Int32,System.String,System.String)">
+            <summary>
+            在指定机构群/公共群范围发表话题
+            </summary>
+            <param name="groupId">	群ID</param>
+            <param name="topicTitle">话题标签（最多50字数）</param>
+            <param name="topicContent">	话题内容（最多10000字数，不包含html样式）</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.SendComment(System.Int32,System.Int32,System.String,System.Int32)">
+            <summary>
+            对指定话题发表/回复评论
+            </summary>
+            <param name="groupId">	群ID</param>
+            <param name="topId">话题ID</param>
+            <param name="commentContent">评论内容（最多140字数）</param>
+            <param name="comment_id">上级评论ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.DeleteTopic(System.Int32,System.Int32)">
+            <summary>
+             删除当前用户发表的话题
+            </summary>
+            <param name="groupId">群ID</param>
+            <param name="topId">话题ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.DeleteComment(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            删除当前用户发表的话题评论
+            </summary>
+            <param name="groupId">	群ID</param>
+            <param name="topId">话题ID</param>
+            <param name="commentId">评论ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.GroupApi.CheckPostSuccess(RestSharp.IRestResponse)">
+            <summary>
+            检测发送是否成功
+            </summary>
+            <param name="response"></param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.MsgApi.SendMsg(System.Int32,System.String)">
+            <summary>
+             向指定用户发送易班站内信应用提醒。
+            </summary>
+            <param name="to_yb_uid">目标用户Id</param>
+            <param name="content">发送内容不超过300字</param>
+            <returns></returns>
+        </member>
+        <member name="T:YbSDK.Api.OauthApi">
+            <summary>
+            授权接口
+            </summary>
+        </member>
+        <member name="M:YbSDK.Api.OauthApi.GetAccessToken(System.String)">
+            <summary>
+            获得Access_Token
+            </summary>
+            <param name="code"></param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.OauthApi.GetAuthorizeUrl(System.String)">
+            <summary>
+            获得授权页面Url
+            </summary>
+            <param name="state">防止跨站攻击的state,需调用者自行校验</param>
+        </member>
+        <member name="M:YbSDK.Api.OauthApi.GetTokenInfo(System.String,System.String)">
+            <summary>
+            授权查询
+            </summary>
+            <param name="accessToken">	选填	查询的授权凭证</param>
+            <param name="ybUid">	选填	查询的易班用户id</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.OauthApi.RevokeToken(System.String)">
+            <summary>
+             帮助开发者主动取消用户的授权。
+            </summary>
+            <param name="token">待注销的授权凭证</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.OauthApi.GenerateErrorForAuth(RestSharp.IRestResponse)">
+            <summary>
+            生成异常
+            </summary>
+            <param name="response"></param>
+        </member>
+        <member name="M:YbSDK.Api.PayApi.PayWangXin(System.Int32)">
+            <summary>
+            指定用户网薪支付。
+            </summary>
+            <param name="pay">支付网薪数</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.SchoolApi.GetUserActive">
+            <summary>
+            获取当日用户活跃统计
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.SchoolApi.GetEgpa(System.Int32)">
+            <summary>
+            获取行政公共群EGPA统计
+            </summary>
+            <param name="groupId">行政公共群ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.SchoolApi.GetRelateApp(System.String,System.Int32,System.Int32)">
+            <summary>
+            获取当前应用所属开发者/可见学校其它的关联应用
+            </summary>
+            <param name="scName"></param>
+            <param name="page">页码（默认1）</param>
+            <param name="count">每页数据量(默认15，最大30)</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.SchoolApi.SendWangXin(System.Int32,System.Int32)">
+            <summary>
+              学校活动账户向指定用户发放活动网薪
+            </summary>
+            <param name="uId"></param>
+            <param name="award"></param>
+            <returns></returns>
+        </member>
+        <member name="T:YbSDK.Api.ShareApi">
+            <summary>
+            分享接口
+            </summary>
+        </member>
+        <member name="M:YbSDK.Api.ShareApi.#ctor(YbSDK.Model.AccessToken)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="token"></param>
+        </member>
+        <member name="M:YbSDK.Api.ShareApi.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="token"></param>
+        </member>
+        <member name="M:YbSDK.Api.ShareApi.GetOtherShare(System.Int32,System.Int32,System.Int32)">
+            <summary>
+             获取指定用户动态列表。
+            </summary>
+            <param name="userId">查询的易班用户id</param>
+            <param name="page">页码（默认1）</param>
+            <param name="count">每页数据量(默认15，最大30)</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.ShareApi.GetShareInfo(System.String)">
+            <summary>
+            获取指定动态内容。
+            </summary>
+            <param name="feedsId">查询的动态id</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.ShareApi.GetMyShare(System.Int32,System.Int32)">
+            <summary>
+             获取当前用户动态列表。
+            </summary>
+            <param name="page">页码（默认1）</param>
+            <param name="count">每页数据量（默认15，最大30）</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.ShareApi.PostComment(System.String,System.String)">
+            <summary>
+             对指定分享动态发表评论/回复指定评论。
+            </summary>
+            <param name="feedId">回复的动态id</param>
+            <param name="content">	发送的评论内容（最多500字数）</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.ShareApi.Praise(System.String,System.Boolean)">
+            <summary>
+            对指定分享动态点赞/同情。
+            </summary>
+            <param name="feedId">指定的动态id</param>
+            <param name="isPraise">操作类型（true-点赞；false-同情）</param>
+            <returns></returns>
+        </member>
+        <member name="T:YbSDK.Api.UserApi">
+            <summary>
+            用户接口
+            </summary>
+        </member>
+        <member name="M:YbSDK.Api.UserApi.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="token"></param>
+        </member>
+        <member name="M:YbSDK.Api.UserApi.#ctor(YbSDK.Model.AccessToken)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="token"></param>
+        </member>
+        <member name="M:YbSDK.Api.UserApi.GetMe">
+            <summary>
+            获取当前用户基本信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.UserApi.GetOther(System.Int32)">
+            <summary>
+            获取指定用户基本信息
+            </summary>
+            <param name="userId">用户Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.UserApi.GetReal">
+            <summary>
+            获取当前用户实名信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.Api.UserApi.GetVerify">
+            <summary>
+            获取当前用户校方认证信息。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:YbSDK.Model.Error">
+            <summary>
+            错误信息,通常作为ErrorInfo成员,仅在获取access_token时候单独使用
+            </summary>
+        </member>
+        <member name="T:YbSDK.Model.ErrorInfo">
+            <summary>
+            错误信息
+            </summary>
+        </member>
+        <member name="P:YbSDK.Model.AccessToken.access_token">
+            <summary>
+            授权凭证
+            </summary>
+        </member>
+        <member name="P:YbSDK.Model.AccessToken.userid">
+            <summary>
+            授权用户id
+            </summary>
+        </member>
+        <member name="P:YbSDK.Model.AccessToken.expires">
+            <summary>
+            截止有效期
+            </summary>
+        </member>
+        <member name="T:YbSDK.Model.UserVerify">
+            <summary>
+            校方验证用户
+            </summary>
+        </member>
+        <member name="M:YbSDK.YbClient.#ctor(YbSDK.Model.AccessToken)">
+            <summary>
+            初始化
+            </summary>
+        </member>
+        <member name="M:YbSDK.YbClient.#ctor(System.String)">
+            <summary>
+            初始化
+            </summary>
+        </member>
+        <member name="M:YbSDK.YbClient.GetAccessToken(System.String)">
+            <summary>
+            获得Access_Token
+            </summary>
+            <param name="code"></param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.YbClient.GetAuthorizeUrl(System.String)">
+            <summary>
+            获得授权地址
+            </summary>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.YbClient.GetTokenInfo(System.String,System.String)">
+            <summary>
+            授权查询
+            </summary>
+            <param name="accessToken">	选填	查询的授权凭证</param>
+            <param name="ybUid">	选填	查询的易班用户id</param>
+            <returns></returns>
+        </member>
+        <member name="M:YbSDK.YbClient.RevokeToken(System.String)">
+            <summary>
+            注销accessToken
+            </summary>
+            <param name="accessToken"></param>
+            <returns></returns>
+        </member>
+        <member name="T:YbSDK.YbConfig">
+            <summary>
+            易班配置类
+            </summary>
+        </member>
+    </members>
+</doc>

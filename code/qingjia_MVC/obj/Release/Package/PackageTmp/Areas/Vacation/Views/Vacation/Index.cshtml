@@ -1,0 +1,213 @@
+﻿@{
+    ViewBag.Title = "节假日去向";
+    var F = @Html.F();
+}
+
+@section head{
+    <link href="~/Content/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    }
+
+@section script{
+    <script>
+        
+       //运行失败 
+    $("#serch").on("click", function () {
+        $("#maintable").load('@Url.Action("GetTable", "Vacation")');
+    });
+
+        //加载数据
+        function download() {
+            $("#maintable").load('@Url.Action("GetTable", "Vacation")');
+        }
+
+        function notify(message) {
+            F.notify({
+                message: message,
+                target: '_top',
+                header: false,
+                positionX: 'center',
+                positionY: 'top'
+            });
+        }
+
+        //Ajax 回调数据
+        function _searchClick() {
+            document.getElementById("download").style.display = "none";
+            var startDate = document.getElementById('startDate-inputEl').value;
+            var startTime = document.getElementById('startTime-inputEl').value;
+            var endDate = document.getElementById('endDate-inputEl').value;
+            var endTime = document.getElementById('endTime-inputEl').value;
+            var className = document.getElementById('className-inputEl').value;
+
+            //判断是否为空
+            if (startDate == "" || startTime == "" || endDate == "" || endTime == "" || className == "") {
+                notify('存在未填项！');
+                return;
+            }
+
+            //判断开始时间是否小于结束时间
+            if (startDate <= endDate) {
+                if (startTime <= endTime) {
+
+                }
+                else {
+                    notify('开始时间不能大于结束时间！');
+                    return;
+                }
+            }
+            else {
+                notify('开始时间不能大于结束时间！');
+                return;
+            }
+
+            //Ajax请求
+            $.ajax({
+                //注意Url传值时不能有空格
+                url: '/Vacation/Vacation/GetTable?startDate=' + startDate + '&startTime=' + startTime + '&endDate=' + endDate + '&endTime=' + endTime + '&className=' + className,
+                success: function (response) {
+                    notify('加载完成！');
+                    document.getElementById("download").style.display = "inline-block";
+                    $("#maintable").html(response);
+                },
+                error: function () {
+                    notify('未知错误！');
+                }
+            });
+        }
+
+        //Ajax 回调数据
+        function _download() {
+            var startDate = document.getElementById('startDate-inputEl').value;
+            var startTime = document.getElementById('startTime-inputEl').value;
+            var endDate = document.getElementById('endDate-inputEl').value;
+            var endTime = document.getElementById('endTime-inputEl').value;
+            var className = document.getElementById('className-inputEl').value;
+
+            //判断是否为空
+            if (startDate == "" || startTime == "" || endDate == "" || endTime == "" || className == "") {
+                notify('存在未填项！');
+                return;
+            }
+
+            //下载Excel  链接到指定跳转页面，返回文件类型为xls时，浏览器会自动识别文件并下载
+            window.location.href = '@Url.Action("DownLoad")?startDate=' + startDate + '&startTime=' + startTime + '&endDate=' + endDate + '&endTime=' + endTime + '&className=' + className;
+        }
+    </script>
+    }
+
+@section body{
+
+    <div class="SerchForm" style="width:90%; background-color:none; margin-left:auto; margin-right:auto; margin-top:30px;">
+        @(
+            F.Form()
+                .ID("searchForm")
+                .ShowBorder(false)
+                .Toolbars(
+                    F.Toolbar()
+                        .ToolbarAlign(ToolbarAlign.Center)
+                        .Position(ToolbarPosition.Bottom)
+                        .Items(
+                            F.Button()
+                                .ID("serch")
+                                .Text("查询")
+                                .OnClientClick("_searchClick()"),
+                            F.Button()
+                                .ID("download")
+                                .Hidden(true)
+                                .Text("导出")
+                                .OnClientClick("_download()")
+                        )
+                )
+                .Rows(
+                    F.FormRow()
+                        .Items(
+                            F.Label()
+                        ),
+                    F.FormRow()
+                        .Items(
+                            F.DatePicker()
+                                .Required(true)
+                                .EnableEdit(false)
+                                .Label("假期开始时间")
+                                .LabelWidth(110)
+                                .EmptyText("请选择开始日期")
+                                .ID("startDate")
+                                .ShowRedStar(true),
+                            F.TimePicker()
+                                .ID("startTime")
+                                .ShowRedStar(true)
+                                .EnableEdit(false)
+                                .Increment(30)
+                                .MarginRight(110)
+                                .MinTimeText("00:00")
+                                .MaxTimeText("23:00")
+                                .Required(true)
+                                .EmptyText("请选择开始时间")
+                        ),
+                    F.FormRow()
+                        .Items(
+                            F.Label()
+                        ),
+                    F.FormRow()
+                        .Items(
+                            F.DatePicker()
+                                .Required(true)
+                                .EnableEdit(false)
+                                .Label("假期结束时间")
+                                .EmptyText("请选择结束日期")
+                                .LabelWidth(110)
+                                .ID("endDate")
+                                .ShowRedStar(true),
+                            F.TimePicker()
+                                .ID("endTime")
+                                .ShowRedStar(true)
+                                .EnableEdit(false)
+                                .Increment(30)
+                                .MarginRight(110)
+                                .MinTimeText("00:00")
+                                .MaxTimeText("23:00")
+                                .Required(true)
+                                .EmptyText("请选择结束时间")
+                        ),
+                    F.FormRow()
+                        .Items(
+                            F.Label()
+                        ),
+                    F.FormRow()
+                        .Items(
+                            F.DropDownList()
+                                .ID("className")
+                                .AutoSelectFirstItem(false)
+                                .EmptyText("请选择班级")
+                                .Required(true)
+                                .OnSelectedIndexChanged("","")
+                                .Label("请选择班级")
+                                .LabelWidth(110)
+                                .MarginRight(110)
+                                .DataSource(ViewBag.classSource)
+                        ),
+                    F.FormRow()
+                        .Items(
+                            F.Label()
+                        )
+                )
+        )
+        <div id="maintable">
+        </div>
+    </div>
+
+
+@(
+    F.Panel()
+        .ID("123")
+        .Title("节假日请假导出")
+        .ShowHeader(true)
+        .ShowBorder(true)
+        .IsViewPort(true)
+        .AutoScroll(true)
+        .ContentEl(".SerchForm")
+)
+
+    
+}
+

@@ -6,9 +6,10 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Data;
-using qingjia_WeChat.HomePage.Class;
+using qingjia_YiBan.HomePage.Class;
+using qingjia_YiBan.HomePage.Model.API;
 
-namespace qingjia_WeChat.SubPage
+namespace qingjia_YiBan.SubPage
 {
     public partial class WebForm8 : System.Web.UI.Page
     {
@@ -23,20 +24,43 @@ namespace qingjia_WeChat.SubPage
 
         private void LoadDB()
         {
-            string ST_NUM = Request.Cookies["UserInfo"]["UserID"].ToString();
-
-            string strWHere = " StudentID = '" + ST_NUM + "' and StateLeave='1' and StateBack='0'";
-            DataSet ds = LeaveList.GetList3(strWHere);
-            DataTable dtSource = ds.Tables[0];
-            for (int i = 0; i < dtSource.Rows.Count; i++)
+            string access_token = Session["access_token"].ToString();
+            Client<List<LeaveList>> client = new Client<List<LeaveList>>();
+            ApiResult<List<LeaveList>> result = client.GetRequest("access_token=" + access_token, "/api/leavelist/getlist");
+            if (result.result == "success")
             {
-                string LV_NUM = dtSource.Rows[i]["ID"].ToString();
-                string LeaveType = DB.getKey("LeaveType", dtSource.Rows[i]["TypeChildID"].ToString());
-                string go_time = dtSource.Rows[i]["TimeLeave"].ToString();
-                string back_time = dtSource.Rows[i]["TimeBack"].ToString();
-                leave_list_div.Controls.Add(CreatLeaveList(LV_NUM, LeaveType, go_time, back_time));
-                leave_list_div.Controls.Add(CreatBr());
+                if (result.data != null)
+                {
+                    List<LeaveList> list = result.data;
+                    foreach (LeaveList item in list)
+                    {
+                        if (item.State == "待销假")
+                        {
+                            string LV_NUM = item.ID;
+                            string LeaveType = item.Type;
+                            string go_time = item.TimeBack.ToString("yyyy-MM-dd HH:MM:ss");
+                            string back_time = item.SubmitTime;
+                            leave_list_div.Controls.Add(CreatLeaveList(LV_NUM, LeaveType, go_time, back_time));
+                            leave_list_div.Controls.Add(CreatBr());
+                        }
+                    }
+                }
             }
+
+            //string ST_NUM = Request.Cookies["UserInfo"]["UserID"].ToString();
+
+            //string strWHere = " StudentID = '" + ST_NUM + "' and StateLeave='1' and StateBack='0'";
+            //DataSet ds = LeaveList.GetList3(strWHere);
+            //DataTable dtSource = ds.Tables[0];
+            //for (int i = 0; i < dtSource.Rows.Count; i++)
+            //{
+            //    string LV_NUM = dtSource.Rows[i]["ID"].ToString();
+            //    string LeaveType = DB.getKey("LeaveType", dtSource.Rows[i]["TypeChildID"].ToString());
+            //    string go_time = dtSource.Rows[i]["TimeLeave"].ToString();
+            //    string back_time = dtSource.Rows[i]["TimeBack"].ToString();
+            //    leave_list_div.Controls.Add(CreatLeaveList(LV_NUM, LeaveType, go_time, back_time));
+            //    leave_list_div.Controls.Add(CreatBr());
+            //}
         }
 
         /// <summary>

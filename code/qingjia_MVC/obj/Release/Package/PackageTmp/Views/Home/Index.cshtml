@@ -46,7 +46,7 @@
                         .EnableDefaultCorner(false)
                         .EnableDefaultState(false)
                         .IconAlign(IconAlign.Left)
-                        .IconUrl(Url.Content("~/res/images/developer.jpg"))
+                        .IconUrl(Url.Content("~/res/images/head_portrait.png"))
                         .Text(ViewBag.UserName)
                         .CssClass("userpicaction")
                         .Menu(F.Menu()
@@ -99,107 +99,107 @@
                         .EnableCollapse(true)
                         .Title("菜单")
                         .DataSource(ViewBag.TreeDataSource)
-                    //    .Nodes(
-                    //F.TreeNode()
-                    //    .Text("默认分类")
-                    //    .Expanded(true)
-                    //    .Nodes(
-                    //        F.TreeNode()
-                    //            .Text("开始页面")
-                    //            .NavigateUrl("~/Home/Hello"),
-                    //        F.TreeNode()
-                    //            .Text("登录页面")
-                    //            .NavigateUrl("~/Home/Login"),
-                    //        F.TreeNode()
-                    //            .Text("主页（辅导员）")
-                    //            .NavigateUrl("~/Home/Default_T"),
-                    //        F.TreeNode()
-                    //            .Text("主页（学生）")
-                    //            .NavigateUrl("~/Home/Default_ST")
-                    //    ),
+            //    .Nodes(
+            //F.TreeNode()
+            //    .Text("默认分类")
+            //    .Expanded(true)
+            //    .Nodes(
+            //        F.TreeNode()
+            //            .Text("开始页面")
+            //            .NavigateUrl("~/Home/Hello"),
+            //        F.TreeNode()
+            //            .Text("登录页面")
+            //            .NavigateUrl("~/Home/Login"),
+            //        F.TreeNode()
+            //            .Text("主页（辅导员）")
+            //            .NavigateUrl("~/Home/Default_T"),
+            //        F.TreeNode()
+            //            .Text("主页（学生）")
+            //            .NavigateUrl("~/Home/Default_ST")
+            //    ),
 
                     //                                        F.TreeNode()
-                    //                                            .Text("请假管理")
-                    //                                            .Expanded(true)
-                    //                                            .Nodes(
-                    //                                                F.TreeNode()
-                    //                                                    .Text("申请请假")
-                    //                                                    .NavigateUrl("~/Leave/LeaveList"),
-                    //                                                F.TreeNode()
-                    //                                                    .Text("请假说明")
-                    //                                                    .NavigateUrl("~/Leave/LeaveForm")
-                                                                    
+            //                                            .Text("请假管理")
+            //                                            .Expanded(true)
+            //                                            .Nodes(
+            //                                                F.TreeNode()
+            //                                                    .Text("申请请假")
+            //                                                    .NavigateUrl("~/Leave/LeaveList"),
+            //                                                F.TreeNode()
+            //                                                    .Text("请假说明")
+            //                                                    .NavigateUrl("~/Leave/LeaveForm")
+
                     //                                            ),
-                    //                                            F.TreeNode()
-                    //                                            .Text("表单管理")
-                    //                                            .Expanded(true)
-                    //                                            .Nodes(
-                    //                                                        F.TreeNode()
-                    //                                                            .Text("请假记录")
-                    //                                                                    .NavigateUrl("~/Leave/LeaveList/leavelist"),
-                    //                                                        F.TreeNode()
-                    //                                                            .Text("通讯录")
-                    //                                                                    .NavigateUrl("~/Home/Hello")
-                    //                                            ),
-                    //                                            F.TreeNode()
-                    //                                            .Text("审批管理")
-                    //                                            .Expanded(true)
-                    //                                            .Nodes(
-                    //                                                        F.TreeNode()
-                    //                                                            .Text("请假审批")
-                    //                                                                    .NavigateUrl("~/Leave/AuditForm/AuditLeave"),
-                    //                                                        F.TreeNode()
-                    //                                                            .Text("销假审批")
-                    //                                                                    .NavigateUrl("~/Leave/AuditForm/AuditBack")
-                    //                                            ),
-                    //                                            F.TreeNode()
-                    //                                            .Text("个人信息管理")
-                    //                                            .Expanded(true)
-                    //                                            .Nodes(
-                    //                                                        F.TreeNode()
-                    //                                                            .Text("基本信息管理")
-                    //                                                                    .NavigateUrl("~/UserInfo/UserInfo/Index"),
-                    //                                                        F.TreeNode()
-                    //                                                            .Text("密码修改")
-                    //                                                                    .NavigateUrl("~/Password/PwdChange/PwdChange")
-                    //                                            ),
-                    //                                            F.TreeNode()
-                    //    .Text("通讯录")
-                    //    .Expanded(true)
-                    //    .Nodes(
-                    //        F.TreeNode()
-                    //            .Text("班级通讯录")
-                    //            .NavigateUrl("~/AddressList/ClassAddress"),
-                    //        F.TreeNode()
-                    //            .Text("年级通讯录")
-                    //            .NavigateUrl("~/AddressList/GradeAddress")
-                    //    ),
-                    //F.TreeNode()
-                    //    .Text("通知管理")
-                    //    .Expanded(true)
-                    //    .Nodes(
-                    //        F.TreeNode()
-                    //            .Text("晚点名通知")
-                    //            .NavigateUrl("~/Message/NightMessage"),
-                    //        F.TreeNode()
-                    //            .Text("销假通知")
-                    //            .NavigateUrl("~/Message/DeleteMessage"),
-                    //        F.TreeNode()
-                    //            .Text("截止通知")
-                    //            .NavigateUrl("~/Message/DeadlineMessage")
-                    //    ),
-                    //F.TreeNode()
-                    //    .Text("晚点名名单")
-                    //    .Expanded(true)
-                    //    .Nodes(
-                    //        F.TreeNode()
-                    //            .Text("晚点名名单（辅导员）")
-                    //            .NavigateUrl("~/CallName/NameForT"),
-                    //        F.TreeNode()
-                    //            .Text("晚点名名单（班级）")
-                    //            .NavigateUrl("~/CallName/NameForC")
-                    //    )
-                                                                
+            //                                            F.TreeNode()
+            //                                            .Text("表单管理")
+            //                                            .Expanded(true)
+            //                                            .Nodes(
+            //                                                        F.TreeNode()
+            //                                                            .Text("请假记录")
+            //                                                                    .NavigateUrl("~/Leave/LeaveList/leavelist"),
+            //                                                        F.TreeNode()
+            //                                                            .Text("通讯录")
+            //                                                                    .NavigateUrl("~/Home/Hello")
+            //                                            ),
+            //                                            F.TreeNode()
+            //                                            .Text("审批管理")
+            //                                            .Expanded(true)
+            //                                            .Nodes(
+            //                                                        F.TreeNode()
+            //                                                            .Text("请假审批")
+            //                                                                    .NavigateUrl("~/Leave/AuditForm/AuditLeave"),
+            //                                                        F.TreeNode()
+            //                                                            .Text("销假审批")
+            //                                                                    .NavigateUrl("~/Leave/AuditForm/AuditBack")
+            //                                            ),
+            //                                            F.TreeNode()
+            //                                            .Text("个人信息管理")
+            //                                            .Expanded(true)
+            //                                            .Nodes(
+            //                                                        F.TreeNode()
+            //                                                            .Text("基本信息管理")
+            //                                                                    .NavigateUrl("~/UserInfo/UserInfo/Index"),
+            //                                                        F.TreeNode()
+            //                                                            .Text("密码修改")
+            //                                                                    .NavigateUrl("~/Password/PwdChange/PwdChange")
+            //                                            ),
+            //                                            F.TreeNode()
+            //    .Text("通讯录")
+            //    .Expanded(true)
+            //    .Nodes(
+            //        F.TreeNode()
+            //            .Text("班级通讯录")
+            //            .NavigateUrl("~/AddressList/ClassAddress"),
+            //        F.TreeNode()
+            //            .Text("年级通讯录")
+            //            .NavigateUrl("~/AddressList/GradeAddress")
+            //    ),
+            //F.TreeNode()
+            //    .Text("通知管理")
+            //    .Expanded(true)
+            //    .Nodes(
+            //        F.TreeNode()
+            //            .Text("晚点名通知")
+            //            .NavigateUrl("~/Message/NightMessage"),
+            //        F.TreeNode()
+            //            .Text("销假通知")
+            //            .NavigateUrl("~/Message/DeleteMessage"),
+            //        F.TreeNode()
+            //            .Text("截止通知")
+            //            .NavigateUrl("~/Message/DeadlineMessage")
+            //    ),
+            //F.TreeNode()
+            //    .Text("晚点名名单")
+            //    .Expanded(true)
+            //    .Nodes(
+            //        F.TreeNode()
+            //            .Text("晚点名名单（辅导员）")
+            //            .NavigateUrl("~/CallName/NameForT"),
+            //        F.TreeNode()
+            //            .Text("晚点名名单（班级）")
+            //            .NavigateUrl("~/CallName/NameForC")
+            //    )
+
                     //    )
                 ),
             F.Region()

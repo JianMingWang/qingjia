@@ -5,11 +5,12 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-using qingjia_WeChat.HomePage.Class;
+using qingjia_YiBan.HomePage.Class;
 using System.Data;
 using System.Data.SqlClient;
+using qingjia_YiBan.HomePage.Model.API;
 
-namespace qingjia_WeChat.SubPage
+namespace qingjia_YiBan.SubPage
 {
     public partial class WebForm3 : System.Web.UI.Page
     {
@@ -28,31 +29,62 @@ namespace qingjia_WeChat.SubPage
 
         private void LoadDB()
         {
-            string ST_NUM = Request.Cookies["UserInfo"]["UserID"].ToString();
-
-            DB dbInfo = new DB();
-            DataSet dsInfo = dbInfo.GetList("ST_Num='" + ST_NUM + "'");
-            DataTable dtSource = dsInfo.Tables[0];
-
-            Label_Num.InnerText = dtSource.Rows[0]["ST_Num"].ToString();
-            Label_Name.InnerText = dtSource.Rows[0]["ST_Name"].ToString();
-            Label_Class.InnerText = dtSource.Rows[0]["ST_Class"].ToString();
-            Label_Tel.InnerText = dtSource.Rows[0]["ST_Tel"].ToString();
-            Label_ParentTel.InnerText = dtSource.Rows[0]["OneTel"].ToString();
-
-            //获取晚点名时间
-            DB db = new DB();
-            DataSet ds_CallTime = db.GetCallTime(" ClassName='" + HttpUtility.UrlDecode(Request.Cookies["UserInfo"]["UserClass"].ToString()) + "'");
-            if (ds_CallTime.Tables[0].Rows.Count > 0)
+            if (HttpContext.Current.Request.Cookies["UserInfo"] != null)
             {
-                txtLeaveTime.InnerText = ((DateTime)ds_CallTime.Tables[0].Rows[0][0]).ToString("yyyy/MM/dd HH:mm");
+                HttpCookie cookie = HttpContext.Current.Request.Cookies["UserInfo"];
+                Label_Num.InnerText = cookie["UserID"].ToString();
+                Label_Name.InnerText = HttpUtility.UrlDecode(cookie["UserName"].ToString());
+                Label_Class.InnerText = HttpUtility.UrlDecode(cookie["UserClass"].ToString());
+                Label_Tel.InnerText = cookie["UserTel"].ToString(); ;
+                Label_ParentTel.InnerText = cookie["UserContactTel"].ToString(); ;
             }
             else
             {
-                txtLeaveTime.InnerText = "未设置";
+                //从API接口获取数据
+                string access_token = Session["access_token"].ToString();
+                string ST_NUM = access_token.Substring(0, access_token.IndexOf("_"));
+                Client<UserInfo> client = new Client<UserInfo>();
+                ApiResult<UserInfo> result = client.GetRequest("access_token=" + access_token, "/api/student/me");
+
+                if (result.result == "error" || result.data == null)
+                {
+                    //出现错误，获取信息失败，跳转到错误界面 尚未完成
+                    Response.Redirect("../Error.aspx");
+                    return;
+                }
+                UserInfo userInfo = result.data;
+
+                Label_Num.InnerText = userInfo.UserID;
+                Label_Name.InnerText = userInfo.UserName;
+                Label_Class.InnerText = userInfo.UserClass;
+                Label_Tel.InnerText = userInfo.UserTel;
+                Label_ParentTel.InnerText = userInfo.ContactTel;
             }
 
-
+            if (HttpContext.Current.Request.Cookies["NightInfo"] != null)
+            {
+                HttpCookie cookie = HttpContext.Current.Request.Cookies["NightInfo"];
+                string time = cookie["BatchTime"].ToString();
+                DateTime _time = Convert.ToDateTime(time);
+                txtLeaveTime.InnerText = _time.ToString("yyyy/MM/dd HH:mm");
+            }
+            else
+            {
+                string access_token = Session["access_token"].ToString();
+                Client<NightInfo> client_Night = new Client<NightInfo>();
+                ApiResult<NightInfo> result_Night = client_Night.GetRequest("access_token=" + access_token, "api/student/night");
+                if (result_Night.result == "success")
+                {
+                    string time = result_Night.data.BatchTime.ToString();
+                    DateTime _time = Convert.ToDateTime(time);
+                    txtLeaveTime.InnerText = _time.ToString("yyyy/MM/dd HH:mm");
+                }
+                else
+                {
+                    //返回错误界面
+                    Response.Redirect("../Error.aspx");
+                }
+            }
         }
 
         protected void btnSubmit_ServerClick(object sender, EventArgs e)
@@ -65,14 +97,15 @@ namespace qingjia_WeChat.SubPage
 
         private bool CheckDate()
         {
-            string teacher = HttpUtility.UrlDecode(Request.Cookies["UserInfo"]["UserTeacher"].ToString());
-
-            DB db = new DB();
-            DataSet ds_endTime = db.GetTimeEnd(" TypeID='2' AND TeacherID='" + teacher + "'");
-            if (ds_endTime.Tables[0].Rows.Count > 0)
+            DateTime _time;
+            if (HttpContext.Current.Request.Cookies["NightInfo"] != null)
             {
-                DateTime end_time_dt = (DateTime)ds_endTime.Tables[0].Rows[0]["Time"];
-                if (end_time_dt <= DateTime.Now)//小于当前时间表示不可请假
+                HttpCookie cookie = HttpContext.Current.Request.Cookies["NightInfo"];
+
+                string time = cookie["DeadLine"];
+                _time = Convert.ToDateTime(time);
+
+                if (_time <= DateTime.Now)//小于当前时间表示不可请假
                 {
                     return false;
                 }
@@ -83,13 +116,34 @@ namespace qingjia_WeChat.SubPage
             }
             else
             {
-                return true;
+                string access_token = Session["access_token"].ToString();
+                Client<NightInfo> client_Night = new Client<NightInfo>();
+                ApiResult<NightInfo> result_Night = client_Night.GetRequest("access_token=" + access_token, "api/student/night");
+                if (result_Night.result == "success")
+                {
+                    string time = result_Night.data.DeadLine.ToString();
+                    _time = Convert.ToDateTime(time);
+
+                    if (_time <= DateTime.Now)//小于当前时间表示不可请假
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    Response.Redirect("../Error.Aspx");
+                    return false;
+                }
             }
         }
 
         private bool Check()
         {
-            if ( LeaveReason.Value.ToString().Trim() != "")
+            if (LeaveReason.Value.ToString().Trim() != "")
             {
                 if (ChangeTime(txtLeaveTime.InnerText.ToString()) != "")
                 {
@@ -122,100 +176,59 @@ namespace qingjia_WeChat.SubPage
 
         protected void Insertdata_out()//晚点名请假
         {
-            string LV_NUM = DateTime.Now.ToString("yyMMdd");//流水号的生成
             DateTime gotime_out = Convert.ToDateTime(txtLeaveTime.InnerText.ToString());
-            //检查是否存在相同申请   
-            DataSet ds_ll = LeaveList.GetList("StudentID='" + Label_Num.InnerText.ToString().Trim() + "' and TimeLeave='" + gotime_out + "' and LEFT(LeaveType,4) = '晚点名请' ");
+            Insert_out(gotime_out);
+        }
 
-            if (ds_ll.Tables[0].Rows.Count > 0)
+        public void Insert_out(DateTime gotime_out)
+        {
+
+            #region 拼装数据
+            string access_token = Session["access_token"].ToString();
+            string leave_type = "晚点名请假";
+            string leave_child_type = "";
+            string leave_date = gotime_out.ToString("yyyy-MM-dd");
+            string leave_time = gotime_out.ToString("HH:mm:ss");//HH 代表24小时制 hh代表12小时制
+            string back_date = gotime_out.ToString("yyyy-MM-dd");
+            string back_time = gotime_out.ToString("HH:mm:ss");//HH 代表24小时制 hh代表12小时制
+            string leave_reason = LeaveReason.Value.ToString().Trim();
+
+            if (x11.Checked == true)
             {
-                for (int i = 0; i < ds_ll.Tables[0].Rows.Count; i++)
+                leave_child_type = "公假";
+            }
+            if (x12.Checked == true)
+            {
+                leave_child_type = "事假";
+            }
+            if (x13.Checked == true)
+            {
+                leave_child_type = "病假";
+            }
+            #endregion
+
+            #region 发送Post请求
+            Client<string> client = new Client<string>();
+            string _postString = String.Format("access_token={0}&leave_type={1}&leave_child_type={2}&leave_date={3}&leave_time={4}&back_date={5}&back_time={6}&leave_reason={7}", access_token, leave_type, leave_child_type, leave_date, leave_time, back_date, back_time, leave_reason);//8个参数
+            ApiResult<string> result = client.PostRequest(_postString, "/api/leavelist/leaveschool");
+            if (result != null)
+            {
+                if (result.result == "success")
                 {
-                    if (ds_ll.Tables[0].Rows[i]["StateBack"].ToString().Trim() == "0")
-                    {
-                        txtError.Value = "您已提交过此时间段的请假申请！";
-                        break;
-                    }
-                    else
-                    {
-                        Insert_out(LV_NUM, gotime_out);
-                        break;
-                    }
+                    Response.Redirect("schoolleave_succeed.aspx");
+                }
+                else
+                {
+                    txtError.Value = result.messages;
                 }
             }
             else
             {
-                Insert_out(LV_NUM, gotime_out);
+                //出现错误   此处报错说明API接口或网络存在问题
+                txtError.Value = "出现未知错误，请联系管理员！";
             }
-        }
+            #endregion
 
-        public void Insert_out(string LV_NUM, DateTime gotime_out)
-        {
-            DataSet ds_ll_2 = LeaveList.GetList2("ID like '%" + LV_NUM + "%' order by ID DESC ");
-            string end3str = "0001";
-            if (ds_ll_2.Tables[0].Rows.Count > 0)
-            {
-                string leavenumtop = ds_ll_2.Tables[0].Rows[0][0].ToString().Trim();
-                int end3 = Convert.ToInt32(leavenumtop.Substring(6, 4));
-                end3++;
-                end3str = end3.ToString("0000");//按照此格式Tostring
-            }
-            LV_NUM += end3str;
-
-            int LV_Class = 0;
-            if (x11.Checked == true)
-            {
-                LV_Class = 7;//公假
-            }
-            if (x12.Checked == true)
-            {
-                LV_Class = 8;//事假
-            }
-            if (x13.Checked == true)
-            {
-                LV_Class = 9;//病假
-            }
-
-            DateTime nowtime = DateTime.Now;
-            LL_Model model_ll = new LL_Model();
-
-            //model_ll.StudentID = Label_Num.InnerText.ToString().Trim();
-            //model_ll.TimeLeave = gotime_out;
-            //model_ll.TimeBack = gotime_out;
-            ////5代表早晚自习请假
-            //model_ll.TypeID = 2;
-            //model_ll.ID = LV_NUM;
-            //model_ll.SubmitTime = nowtime;
-            //model_ll.LeaveWay = "";
-            //model_ll.BackWay = "";
-            //model_ll.Address = "";
-            //model_ll.StateLeave = "4";
-            //model_ll.StateBack = "4";
-            //model_ll.Reason = LeaveReason.Value.ToString().Trim();
-            //model_ll.TypeChildID = LV_Class;
-            //model_ll.Teacher = "";
-            //model_ll.Lesson = "";
-            //model_ll.Notes = "";
-
-            model_ll.StudentID = Label_Num.InnerText.ToString().Trim();
-            model_ll.TimeLeave = gotime_out;
-            model_ll.TimeBack = gotime_out;
-            //2代表节假日请假
-            model_ll.TypeID = 2;
-            model_ll.ID = LV_NUM;
-            model_ll.SubmitTime = nowtime;
-            model_ll.LeaveWay = "";
-            model_ll.BackWay = "";
-            model_ll.Address = "";
-            model_ll.StateLeave = "4";
-            model_ll.StateBack = "4";
-            model_ll.Reason = LeaveReason.Value.ToString().Trim();
-            model_ll.TypeChildID = LV_Class;
-            model_ll.Teacher = "";
-            model_ll.Lesson = "";
-            model_ll.Notes = "";
-            LeaveList.Add(model_ll);
-            Response.Redirect("specialleave_succeed.aspx");
         }
 
         private string ChangeTime(string time)

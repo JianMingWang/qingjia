@@ -1,19 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
-using System.Data;
-using qingjia_WeChat.HomePage.Class;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
+using qingjia_YiBan.HomePage.Class;
+using qingjia_YiBan.HomePage.Model.API;
+using System.Text;
 
-namespace qingjia_WeChat.HomePage
+namespace qingjia_YiBan.HomePage
 {
     public partial class qingjia_WeChat : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Request.QueryString["access_token"] != null)
+            {
+                string access_token = Request.QueryString["access_token"].ToString();
+                Session["access_token"] = access_token;
+            }
+
+            //测试运行
+            //string access_token = "0121403490107_3749f6d6-8a19-4bb3-887a-3d9d2f464d96";
+            //Session["access_token"] = access_token;
+
             //获取学生基本信息
             LoadDB();
             //获取点名时间、请假截止时间
@@ -22,96 +28,238 @@ namespace qingjia_WeChat.HomePage
 
         private void LoadDB()
         {
-            //string ST_NUM = "0121403490106";
-            string ST_NUM = Session["ST_Num"].ToString();
+            string access_token = Session["access_token"].ToString();
+            string ST_NUM = access_token.Substring(0, access_token.IndexOf("_"));
 
-            DB db = new DB();
-            DataSet ds_st = db.GetList("ST_Num ='" + ST_NUM + "'");
-            if (ds_st.Tables[0].Rows.Count > 0)
+            if (access_token == null)
             {
-                //登录信息正确，将相关信息写入cookies
-                HttpCookie cookie = new HttpCookie("UserInfo");
-                cookie.Values.Add("UserID", ds_st.Tables[0].Rows[0]["ST_Num"].ToString());
-                cookie.Values.Add("UserName", HttpUtility.UrlEncode(ds_st.Tables[0].Rows[0]["ST_Name"].ToString()));
-                //cookie.Values.Add("UserGroup", ds_st.Tables[0].Rows[0]["ST_GROUP"].ToString());
-                cookie.Values.Add("UserClass", HttpUtility.UrlEncode(ds_st.Tables[0].Rows[0]["ST_Class"].ToString()));
-                cookie.Values.Add("UserYear", ds_st.Tables[0].Rows[0]["ST_Grade"].ToString());
-                cookie.Values.Add("UserTeacher", HttpUtility.UrlEncode(ds_st.Tables[0].Rows[0]["ST_Teacher"].ToString()));
-                cookie.Values.Add("UserTeacherID", HttpUtility.UrlEncode(ds_st.Tables[0].Rows[0]["ST_TeacherID"].ToString()));
-                cookie.Expires = DateTime.Now.AddMinutes(20);
-                Response.AppendCookie(cookie);
+                Response.Redirect("Error.aspx");
+            }
 
-                UpdateInfo(ds_st.Tables[0].Rows[0]["ST_Num"].ToString());
-                label_teacherName.InnerText = ds_st.Tables[0].Rows[0]["ST_Teacher"].ToString();
-                label_Year.InnerText = ds_st.Tables[0].Rows[0]["ST_Grade"].ToString();
+            //判断当前回话是否存在Cookie
+            if (HttpContext.Current.Request.Cookies["UserInfo"] != null && HttpContext.Current.Request.Cookies["UserInfo"]["UserID"] == ST_NUM)
+            {
+                HttpCookie _cookie = HttpContext.Current.Request.Cookies["UserInfo"];
+                label_teacherName.InnerText = HttpUtility.UrlDecode(_cookie["UserTeacher"]);
+                label_Year.InnerText = _cookie["UserYear"].ToString();
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this.Page, this.GetType(), "", "alert('用户信息不存在');", true);
+                Client<UserInfo> client = new Client<UserInfo>();
+                ApiResult<UserInfo> result = client.GetRequest("access_token=" + access_token, "/api/student/me");
+
+                if (result.result == "error" || result.data == null)
+                {
+                    //出现错误，获取信息失败，跳转到错误界面 尚未完成
+                    Response.Redirect("Error.aspx");
+                    return;
+                }
+
+                UserInfo userInfo = result.data;
+
+                //登录信息正确，将相关信息写入cookies
+                if (HttpContext.Current.Request.Cookies["UserInfo"] != null)
+                {
+                    HttpContext.Current.Response.Cookies.Remove("UserInfo");
+                }
+                HttpCookie cookie = new HttpCookie("UserInfo");
+                cookie.Values.Add("UserID", userInfo.UserID.ToString().Trim());
+                cookie.Values.Add("UserName", HttpUtility.UrlEncode(userInfo.UserName.ToString().Trim()));
+                cookie.Values.Add("UserClass", HttpUtility.UrlEncode(userInfo.UserClass.ToString().Trim()));
+                cookie.Values.Add("UserYear", userInfo.UserYear.ToString().Trim());
+                cookie.Values.Add("UserTel", userInfo.UserTel.ToString().Trim());
+                cookie.Values.Add("UserTeacher", HttpUtility.UrlEncode(userInfo.UserTeacherName.ToString().Trim()));
+                cookie.Values.Add("UserTeacherID", userInfo.UserTeacherID.ToString().Trim());
+                cookie.Values.Add("UserContactName", HttpUtility.UrlEncode(userInfo.ContactName.ToString().Trim()));
+                cookie.Values.Add("UserContactTel", userInfo.ContactTel.ToString().Trim());
+                cookie.Values.Add("IsFreshman", userInfo.IsFreshman.ToString().Trim());
+                cookie.Expires = DateTime.Now.AddMinutes(20);
+                HttpContext.Current.Response.Cookies.Add(cookie);
+
+                UpdateInfo(userInfo);
+                label_teacherName.InnerText = userInfo.UserTeacherName;
+                label_Year.InnerText = userInfo.UserYear;
             }
         }
 
         private void LoadTimeEnd()
         {
-            //从Cookie中获取值
-            string teacherID = HttpUtility.UrlDecode(Request.Cookies["UserInfo"]["UserTeacherID"].ToString());
-            DB db = new DB();
+            string access_token = Session["access_token"].ToString();
+            string ST_NUM = access_token.Substring(0, access_token.IndexOf("_"));
 
-            //获取晚点名请假截止时间
-            DataSet ds_te = db.GetTimeEnd(" TypeID= 2 AND TeacherID='" + teacherID + "'");
-            if (ds_te.Tables[0].Rows.Count > 0)
+            #region 获得晚点名信息
+            if (HttpContext.Current.Request.Cookies["NightInfo"] != null && HttpContext.Current.Request.Cookies["NightInfo"]["UserID"] == ST_NUM)
             {
-                DateTime end_time_dt = (DateTime)ds_te.Tables[0].Rows[0]["Time"];
-                if (end_time_dt < DateTime.Now)//小于当前是见表示尚可请假
+                HttpCookie _cookie = HttpContext.Current.Request.Cookies["NightInfo"];
+                //晚点名请假截止时间
+                if (_cookie["DeadLine"] != null)
                 {
-                    label_EndTime.InnerText = "已过请假时间！";
+                    DateTime end_time_night = Convert.ToDateTime(_cookie["DeadLine"].ToString());
+
+                    if (end_time_night < DateTime.Now)//小于当前是见表示尚可请假
+                    {
+                        label_EndTime.InnerText = "已过请假时间！";
+                    }
+                    else
+                    {
+                        label_EndTime.InnerText = end_time_night.ToString("yyyy/MM/dd HH:mm");
+                    }
                 }
                 else
                 {
-                    label_EndTime.InnerText = ((DateTime)ds_te.Tables[0].Rows[0]["Time"]).ToString("yyyy/MM/dd HH:mm");
+                    label_EndTime.InnerText = "未设置";
                 }
-            }
-            else
-            {
-                label_EndTime.InnerText = "未设置";
-            }
 
-            //获取晚点名时间
-            DataSet ds_CallTime = db.GetCallTime(" ClassName='" + HttpUtility.UrlDecode(Request.Cookies["UserInfo"]["UserClass"].ToString()) + "'");
-            if (ds_CallTime.Tables[0].Rows.Count > 0)
-            {
-                label_CallTime.InnerText = ((DateTime)ds_CallTime.Tables[0].Rows[0][0]).ToString("yyyy/MM/dd HH:mm");
-            }
-            else
-            {
-                label_CallTime.InnerText = "未设置";
-            }
-
-            //获取节假日请假时间
-            DataSet ds_v_end_time = db.GetTimeEnd(" TypeID= 1 AND TeacherID='" + teacherID + "'");
-            if (ds_v_end_time.Tables[0].Rows.Count > 0)
-            {
-                DateTime end_time_dt = (DateTime)ds_v_end_time.Tables[0].Rows[0]["Time"];
-                if (end_time_dt < DateTime.Now)//小于当前时间表示不可请假
+                //晚点名时间
+                if (_cookie["BatchTime"] != null)
                 {
-                    vacation_end_time.Value = "已过请假时间！";
+                    DateTime call_time = Convert.ToDateTime(_cookie["BatchTime"].ToString());
+                    label_CallTime.InnerText = call_time.ToString("yyyy/MM/dd HH:mm");
                 }
                 else
                 {
-                    Default_Vacation.Visible = true;
-                    vacation_end_time.Value = ((DateTime)ds_v_end_time.Tables[0].Rows[0]["Time"]).ToString("yyyy/MM/dd HH:mm");
+                    label_CallTime.InnerText = "未设置";
                 }
             }
             else
             {
-                vacation_end_time.Value = "未设置";
+                Client<NightInfo> client_Night = new Client<NightInfo>();
+                ApiResult<NightInfo> result_Night = client_Night.GetRequest("access_token=" + access_token, "/api/student/night");
+                if (result_Night.result == "success")
+                {
+                    NightInfo nightInfo = result_Night.data;
+
+                    #region 存入Cookie
+                    if (Request.Cookies["NightInfo"] != null)
+                    {
+                        Response.Cookies.Remove("NightInfo");
+                    }
+
+                    HttpCookie cookie = new HttpCookie("NightInfo");//晚点名信息
+                    cookie.Values.Add("UserID", ST_NUM);
+                    cookie.Values.Add("TeacherID", nightInfo.TeacherID);//老师ID
+                    cookie.Values.Add("TeacherName", HttpUtility.UrlEncode(nightInfo.TeacherName));//老师姓名
+                    cookie.Values.Add("BatchTime", nightInfo.BatchTime);//晚点名批次时间
+                    cookie.Values.Add("DeadLine", nightInfo.DeadLine);//晚点名请假截止时间
+                    cookie.Expires = DateTime.Now.AddMinutes(20);
+                    HttpContext.Current.Response.Cookies.Add(cookie);
+                    #endregion
+
+                    //晚点名请假截止时间
+                    if (nightInfo.DeadLine != null)
+                    {
+                        DateTime end_time_night = Convert.ToDateTime(nightInfo.DeadLine);
+
+                        if (end_time_night < DateTime.Now)//小于当前是见表示尚可请假
+                        {
+                            label_EndTime.InnerText = "已过请假时间！";
+                        }
+                        else
+                        {
+                            label_EndTime.InnerText = end_time_night.ToString("yyyy/MM/dd HH:mm");
+                        }
+                    }
+                    else
+                    {
+                        label_EndTime.InnerText = "未设置";
+                    }
+
+                    //晚点名时间
+                    if (nightInfo.BatchTime != null)
+                    {
+                        DateTime call_time = Convert.ToDateTime(nightInfo.BatchTime);
+                        label_CallTime.InnerText = call_time.ToString("yyyy/MM/dd HH:mm");
+                    }
+                    else
+                    {
+                        label_CallTime.InnerText = "未设置";
+                    }
+                }
+                else
+                {
+                    label_EndTime.InnerText = "获取数据失败！";
+                    label_CallTime.InnerText = "获取数据失败！";
+                }
             }
+            #endregion
+
+            #region 获得节假日信息
+            if (HttpContext.Current.Request.Cookies["HolidayInfo"] != null && HttpContext.Current.Request.Cookies["HolidayInfo"]["UserID"] == ST_NUM)
+            {
+                HttpCookie _cookie = HttpContext.Current.Request.Cookies["HolidayInfo"];
+                //节假日请假时间
+                if (_cookie["DeadLine"] != null)
+                {
+                    DateTime end_time_holiday = Convert.ToDateTime(_cookie["DeadLine"].ToString());
+
+                    if (end_time_holiday < DateTime.Now)//小于当前是见表示尚可请假
+                    {
+                        vacation_end_time.Value = "已过请假时间！";
+                    }
+                    else
+                    {
+                        Default_Vacation.Visible = true;
+                        vacation_end_time.Value = end_time_holiday.ToString("yyyy/MM/dd HH:mm");
+                    }
+                }
+                else
+                {
+                    vacation_end_time.Value = "未设置";
+                }
+            }
+            else
+            {
+                Client<Holiday> client_Holiday = new Client<Holiday>();
+                ApiResult<Holiday> result_Holiday = client_Holiday.GetRequest("access_token=" + access_token, "/api/student/holiday");
+                if (result_Holiday.result == "success")
+                {
+                    Holiday holiday = result_Holiday.data;
+
+                    #region 存入Cookie
+                    if (HttpContext.Current.Request.Cookies["HolidayInfo"] != null)
+                    {
+                        HttpContext.Current.Response.Cookies.Remove("HolidayInfo");
+                    }
+                    HttpCookie cookie = new HttpCookie("HolidayInfo");//节假日离校信息
+                    cookie.Values.Add("UserID", ST_NUM);
+                    cookie.Values.Add("TeacherID", holiday.TeacherID);//老师ID
+                    cookie.Values.Add("DeadLine", holiday.DeadLine);//截止时间
+                    cookie.Expires = DateTime.Now.AddMinutes(20);
+                    HttpContext.Current.Response.Cookies.Add(cookie);
+                    #endregion
+
+                    //节假日请假时间
+                    if (holiday.DeadLine != null)
+                    {
+                        DateTime end_time_holiday = Convert.ToDateTime(holiday.DeadLine);
+
+                        if (end_time_holiday < DateTime.Now)//小于当前是见表示尚可请假
+                        {
+                            vacation_end_time.Value = "已过请假时间！";
+                        }
+                        else
+                        {
+                            Default_Vacation.Visible = true;
+                            vacation_end_time.Value = end_time_holiday.ToString("yyyy/MM/dd HH:mm");
+                        }
+                    }
+                    else
+                    {
+                        vacation_end_time.Value = "未设置";
+                    }
+                }
+                else
+                {
+                    vacation_end_time.Value = "获取数据失败！";
+                }
+            }
+            #endregion
         }
 
         //完善个人信息
-        private void UpdateInfo(string ST_NUM)
+        private void UpdateInfo(UserInfo userInfo)
         {
-            if (DB.InfoCheck(ST_NUM) == false)
+            if (userInfo.ContactName == "" || userInfo.ContactTel == "")
             {
                 Response.Redirect("./SubPage/info_detail.aspx");
             }

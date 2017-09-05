@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="form_taudited.aspx.cs" Inherits="qingjia_WeChat.SubPage.WebForm8" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="form_taudited.aspx.cs" Inherits="qingjia_YiBan.SubPage.WebForm8" %>
 
 <!DOCTYPE html>
 
